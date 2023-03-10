@@ -1,2 +1,3 @@
 # mssivimss-cat-velatorios
-Repo para controlar el desarrollo del MS que gestiona el catálogo de velatorios de SIVIMSS
+CU008_GestionarVelatorios
+Permitir gestionar los velatorios registrados en el sistema. 
