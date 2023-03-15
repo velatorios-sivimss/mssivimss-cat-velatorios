@@ -62,16 +62,15 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> detalleVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-	return providerRestTemplate.consumirServicio(velatorio.detalleVelatorio(request).getDatos(), urlDominioConsulta + "/generico/consulta",
+	return providerRestTemplate.consumirServicio(velatorio.detalleVelatorio(request).getDatos(), urlDominioConsulta + "/generico/consulta ",
 				authentication);	
 	
 	}
 
 	@Override
 	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		VelatoriosRequest velatorioRequest = gson.fromJson(datosJson, VelatoriosRequest.class);
+		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		
 		if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
 			velatorio= new GestionarVelatorios(velatorioRequest);
@@ -84,15 +83,13 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> actualizarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-         
+		VelatoriosRequest velatorioRequest = gson.fromJson( String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		
-		VelatoriosRequest velatorioRequest = gson.fromJson(datosJson, VelatoriosRequest.class);
 		if (velatorioRequest.getIdVelatorio() == null) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
-		if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
+		if(!validarRegistroActualizar(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio(), authentication)) {
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIdUsuarioModifica(usuarioDto.getId().toString());
 		velatorio.setIdUsuarioBaja(usuarioDto.getId());
@@ -104,12 +101,10 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> cambiarEstatusVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-
-		VelatoriosRequest velatorioRequest = gson.fromJson(datosJson, VelatoriosRequest.class);
+		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		
-		if (velatorioRequest.getIdVelatorio()== null) {
+		if (velatorioRequest.getIdVelatorio()== null || velatorioRequest.getIndEstatus()==null) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		velatorio= new GestionarVelatorios(velatorioRequest);
@@ -127,4 +122,13 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	log.info(rst.toString());
 	return !rst.toString().equals("[]");
 	}
+	
+	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
+		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
+				authentication);
+	Object rst=response.getDatos();
+	log.info(rst.toString());
+	return !rst.toString().equals("[]");
+	}
+	
 }

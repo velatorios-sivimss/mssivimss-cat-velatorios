@@ -261,4 +261,17 @@ public class GestionarVelatorios {
 				request.setDatos(parametro);
 				return request;
 		}
-}
+
+		public DatosRequest validacionActualizar(String nomVelatorio, Integer idVelatorio) {
+			DatosRequest request= new DatosRequest();
+			Map<String, Object> parametro = new HashMap<>();
+				String query = "SELECT *  FROM SVC_VELATORIO WHERE NOM_VELATORIO=  '"+nomVelatorio +"' "
+				+ " AND ID_VELATORIO!= "+idVelatorio +"";
+				log.info(query);
+				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
+				parametro.put(AppConstantes.QUERY, encoded);
+				request.setDatos(parametro);
+				return request;
+		}
+
+		}
