@@ -35,17 +35,10 @@ public class GestionarVelatoriosController {
       
 	}
 	
-	@PostMapping("/delega")
+	@PostMapping("/filtros")
 	public Response<?> buscarDelegacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
 		return velatorioService.buscarVelatorioDelegacion(request,authentication);
-      
-	}
-	
-	@PostMapping("/detalle")
-	public Response<?> detalle(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-	
-		return velatorioService.detalleVelatorio(request,authentication);
       
 	}
 	

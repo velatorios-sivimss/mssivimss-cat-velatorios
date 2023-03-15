@@ -18,9 +18,6 @@ public interface GestionarVelatorioService {
 	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException;
 	
 
-	public Response<?> detalleVelatorio(DatosRequest request, Authentication authentication)throws IOException;
-	
-
 	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication)throws IOException;
 	
 

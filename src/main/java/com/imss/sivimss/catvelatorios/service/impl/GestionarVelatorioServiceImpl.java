@@ -61,13 +61,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	}
 
 	@Override
-	public Response<?> detalleVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-	return providerRestTemplate.consumirServicio(velatorio.detalleVelatorio(request).getDatos(), urlDominioConsulta + "/generico/consulta ",
-				authentication);	
-	
-	}
-
-	@Override
 	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
@@ -119,7 +112,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
 				authentication);
 	Object rst=response.getDatos();
-	log.info(rst.toString());
 	return !rst.toString().equals("[]");
 	}
 	
@@ -127,7 +119,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
 				authentication);
 	Object rst=response.getDatos();
-	log.info(rst.toString());
 	return !rst.toString().equals("[]");
 	}
 	

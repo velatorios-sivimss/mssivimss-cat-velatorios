@@ -156,7 +156,6 @@ public class GestionarVelatorios {
 				+ " FROM  SVT_USUARIOS WHERE ID_VELATORIO=E.ID_VELATORIO) AS ADMINISTRADOR"
 				+ " FROM SVC_VELATORIO E JOIN SVC_DELEGACION D ON E.ID_DELEGACION = D.ID_DELEGACION"
 				+ " WHERE NOM_VELATORIO LIKE '%" + palabra + "%'  OR DES_DELEGACION LIKE '%" + palabra + "%'";
-			log.info(query);
 		request.getDatos().remove("palabra");
 		request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
 		return request;
@@ -170,10 +169,7 @@ public class GestionarVelatorios {
 		if(this.indEstatus==0) {
 			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.NOW+"");
 			q.agregarParametroValues("ID_USUARIO_BAJA", "'" + this.idUsuarioBaja + "'");
-		} else {
-			q.agregarParametroValues("ID_USUARIO_ALTA", "" + this.idUsuarioAlta + "");
-			q.agregarParametroValues("FEC_ALTA", ""+AppConstantes.NOW+"");
-		}
+		} 
 		q.addWhere("ID_VELATORIO = " + this.idVelatorio);
 			String query = q.obtenerQueryActualizar();
 		    String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
@@ -181,32 +177,7 @@ public class GestionarVelatorios {
 			request.setDatos(parametro);
 			return request;	
 	}
-		//Buscar por velatorio por id
-	public DatosRequest detalleVelatorio(DatosRequest request) {
 		
-		String palabra = request.getDatos().get(""+AppConstantes.PALABRA+"").toString();
-		String query = "SELECT E.ID_VELATORIO AS ID, E.NOM_VELATORIO AS NOMBRE, "
-				+ "E.NOM_RESPO_SANITARIO AS RESPONSABLE, E.CVE_ASIGNACION AS ASIGNACION, E.DES_CALLE AS CALLE,"
-				+ "E.NUM_EXT AS NOEXTERIOR, E.ID_CODIGO_POSTAL AS IDCP, E.NUM_TELEFONO AS TELEFONO, E.IND_ESTATUS AS ESTATUS, "
-				+ "E.DES_COLONIA AS OTRA_COLONIA, D.DES_DELEGACION AS DELEGACION, "
-				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=1 AND ID_VELATORIO=E.ID_VELATORIO) AS SALA_EMBALSAMAMIENTO, "
-				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=0 AND ID_VELATORIO=E.ID_VELATORIO) AS SALA_CREMACION, "
-				+ "(SELECT COUNT(*) FROM SVC_CAPILLA WHERE ID_VELATORIO=E.ID_VELATORIO) AS CAPILLAS, "
-		     	+ "(SELECT DES_MNPIO FROM SVC_CP WHERE ID_CODIGO_POSTAL=E.ID_CODIGO_POSTAL) AS MUNICIPIO,"
-				+ "(SELECT DES_ESTADO FROM SVC_CP WHERE ID_CODIGO_POSTAL=E.ID_CODIGO_POSTAL) AS ESTADO, "
-				+ "(SELECT DES_COLONIA FROM SVC_CP WHERE ID_CODIGO_POSTAL=E.ID_CODIGO_POSTAL) AS COLONIA, "
-				+ "(SELECT CVE_CODIGO_POSTAL FROM SVC_CP WHERE ID_CODIGO_POSTAL=E.ID_CODIGO_POSTAL) AS CP, "
-				+ "(SELECT CONCAT (NOM_USUARIO,' ', NOM_APELLIDO_PATERNO ,' ', NOM_APELLIDO_MATERNO) " 
-				+ "FROM  SVT_USUARIOS WHERE ID_VELATORIO=E.ID_VELATORIO) AS ADMINISTRADOR "
-				+ "FROM SVC_VELATORIO E JOIN SVC_DELEGACION D ON E.ID_DELEGACION = D.ID_DELEGACION "
-				+ "WHERE E.ID_VELATORIO=" + Integer.parseInt(palabra) + "";
-		
-		request.getDatos().remove(""+AppConstantes.PALABRA+"");
-		request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
-	
-		return request;
-	}
-	
 	//Buscar por delegacion, velatorio especifico o doble filtrado
 		public DatosRequest velatorioPorDelegacion(DatosRequest request, BuscarVelatoriosRequest buscar) {
 			String query="";
@@ -255,7 +226,6 @@ public class GestionarVelatorios {
 			DatosRequest request= new DatosRequest();
 			Map<String, Object> parametro = new HashMap<>();
 				String query = "SELECT *  FROM SVC_VELATORIO WHERE NOM_VELATORIO=  '"+nomVelatorio +"' ";
-				log.info(query);
 				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
 				parametro.put(AppConstantes.QUERY, encoded);
 				request.setDatos(parametro);
@@ -267,7 +237,6 @@ public class GestionarVelatorios {
 			Map<String, Object> parametro = new HashMap<>();
 				String query = "SELECT *  FROM SVC_VELATORIO WHERE NOM_VELATORIO=  '"+nomVelatorio +"' "
 				+ " AND ID_VELATORIO!= "+idVelatorio +"";
-				log.info(query);
 				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
 				parametro.put(AppConstantes.QUERY, encoded);
 				request.setDatos(parametro);
