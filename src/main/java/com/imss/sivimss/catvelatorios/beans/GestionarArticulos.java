@@ -120,7 +120,6 @@ public class GestionarArticulos {
         BuscarArticulosRequest br = json.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), BuscarArticulosRequest.class);
         String query = "";
         if (br.getNombreArticulo() != null) {
-            //query = "SELECT * FROM SVT_ARTICULO SA WHERE SA.DES_ARTICULO LIKE '%" + br.getNombreArticulo() + "%'";
             query = "SELECT " +
                     "SA.ID_ARTICULO AS idArticulo, " +
                     "SA.ID_CATEGORIA_ARTICULO AS idCategoriaArticulo, " +
