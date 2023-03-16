@@ -63,15 +63,25 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	@Override
 	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+	
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		
-		if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
-			velatorio= new GestionarVelatorios(velatorioRequest);
-			velatorio.setIdUsuarioAlta(usuarioDto.getId());
-		return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
-					authentication);
-		}
-		throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
+	
+			if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
+				velatorio= new GestionarVelatorios(velatorioRequest);
+				velatorio.setIdUsuarioAlta(usuarioDto.getId());
+				 Response<?> response = providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
+						authentication);
+				 log.info("Respuesta: "+response.getCodigo().toString());
+				 if(response.getCodigo()==500) {
+					 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
+				 }
+				 return response;
+			}else{
+				throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
+			}
+			
+		      
 	}
 
 	@Override
@@ -86,10 +96,16 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIdUsuarioModifica(usuarioDto.getId().toString());
 		velatorio.setIdUsuarioBaja(usuarioDto.getId());
-		return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
+		 Response<?> response = providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
+		 if(response.getCodigo()==500) {
+			 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
+		 }
+		 return response;
+		}else {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
 		}
-		throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
+		
 	}
 
 	@Override
@@ -109,11 +125,13 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	}
 	
 	private boolean validarRegistro(String nomVelatorio, Authentication authentication) throws IOException{
-		Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
-				authentication);
-	Object rst=response.getDatos();
-	return !rst.toString().equals("[]");
-	}
+			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
+					authentication);
+		Object rst=response.getDatos();
+		return !rst.toString().equals("[]");	
+	
+		}
+		
 	
 	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",

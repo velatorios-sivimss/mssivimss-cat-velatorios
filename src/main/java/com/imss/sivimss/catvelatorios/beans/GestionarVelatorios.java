@@ -7,7 +7,9 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.springframework.http.HttpStatus;
 
+import com.imss.sivimss.catvelatorios.exception.BadRequestException;
 import com.imss.sivimss.catvelatorios.model.request.BuscarVelatoriosRequest;
 import com.imss.sivimss.catvelatorios.model.request.VelatoriosRequest;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
@@ -181,7 +183,8 @@ public class GestionarVelatorios {
 	//Buscar por delegacion, velatorio especifico o doble filtrado
 		public DatosRequest velatorioPorDelegacion(DatosRequest request, BuscarVelatoriosRequest buscar) {
 			String query="";
-			if(buscar.getVelatorio()==null || buscar.getDelegacion()==null) {
+			if(buscar.getVelatorio()==null || buscar.getVelatorio().equals("") ||
+					buscar.getDelegacion()==null || buscar.getDelegacion().equals("")) {
 				
 				query = "SELECT E.ID_VELATORIO AS ID, E.NOM_VELATORIO AS NOMBRE,"
 						+ "E.NOM_RESPO_SANITARIO AS RESPONSABLE, E.CVE_ASIGNACION AS ASIGNACION, E.DES_CALLE AS CALLE, "
@@ -239,8 +242,10 @@ public class GestionarVelatorios {
 				+ " AND ID_VELATORIO!= "+idVelatorio +"";
 				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
 				parametro.put(AppConstantes.QUERY, encoded);
-				request.setDatos(parametro);
-				return request;
+					request.setDatos(parametro);
+					return request;
+				
+				
 		}
 
 		}
