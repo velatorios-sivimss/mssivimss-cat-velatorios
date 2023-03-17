@@ -27,7 +27,15 @@ public class ProviderServiceRestTemplate {
 	private JwtTokenProvider jwtTokenProvider; 
 	
 	private static final Logger log = LoggerFactory.getLogger(ProviderServiceRestTemplate.class);
-	
+
+	/**
+	 * todo - validar si es necesario cambiar la excepcion que se arroja
+	 * @param dato
+	 * @param url
+	 * @param authentication
+	 * @return
+	 * @throws IOException
+	 */
 	public Response<?> consumirServicio(Map<String, Object> dato, String url,Authentication authentication) throws IOException {
 		try {
 			Response respuestaGenerado=restTemplateUtil.sendPostRequestByteArrayToken(url, new EnviarDatosRequest(dato),jwtTokenProvider.createToken((String) authentication.getPrincipal()), Response.class);
