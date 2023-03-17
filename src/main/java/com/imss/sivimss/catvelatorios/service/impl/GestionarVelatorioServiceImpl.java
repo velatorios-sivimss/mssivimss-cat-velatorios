@@ -2,7 +2,6 @@ package com.imss.sivimss.catvelatorios.service.impl;
 
 import java.io.IOException;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -32,9 +31,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
-
-	@Autowired
-	private ModelMapper modelMapper;
 	
 	Gson gson = new Gson();
 	
@@ -65,22 +61,14 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 	
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
-		
-	
+		 
 			if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
 				velatorio= new GestionarVelatorios(velatorioRequest);
 				velatorio.setIdUsuarioAlta(usuarioDto.getId());
-				 Response<?> response = providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
+				return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
 						authentication);
-				 log.info("Respuesta: "+response.getCodigo().toString());
-				 if(response.getCodigo()==500) {
-					 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
-				 }
-				 return response;
-			}else{
-				throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
 			}
-			
+				throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
 		      
 	}
 
@@ -96,16 +84,10 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIdUsuarioModifica(usuarioDto.getId().toString());
 		velatorio.setIdUsuarioBaja(usuarioDto.getId());
-		 Response<?> response = providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
+		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
-		 if(response.getCodigo()==500) {
-			 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
-		 }
-		 return response;
-		}else {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
 		}
-		
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());		
 	}
 
 	@Override
@@ -127,17 +109,21 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	private boolean validarRegistro(String nomVelatorio, Authentication authentication) throws IOException{
 			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
 					authentication);
-		Object rst=response.getDatos();
-		return !rst.toString().equals("[]");	
-	
-		}
+			if (response.getCodigo()==200){
+				Object rst=response.getDatos();
+				return !rst.toString().equals("[]");	
+				}
+			 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
+			}
 		
-	
 	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
 				authentication);
+		if (response.getCodigo()==200){
 	Object rst=response.getDatos();
 	return !rst.toString().equals("[]");
+		}
+		 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
 	}
 	
 }
