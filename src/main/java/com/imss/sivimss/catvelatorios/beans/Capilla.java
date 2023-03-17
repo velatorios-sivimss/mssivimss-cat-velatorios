@@ -31,7 +31,7 @@ public class Capilla {
         queryHelper.agregarParametroValues("NUM_LARGO", String.valueOf(capillaDto.getLargo()));
         queryHelper.agregarParametroValues("NUM_ALTO", String.valueOf(capillaDto.getAlto()));
         queryHelper.agregarParametroValues("ID_VELATORIO", String.valueOf(capillaDto.getIdVelatorio()));
-//        queryHelper.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
+        queryHelper.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
         queryHelper.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(usuario.getId()));
         queryHelper.agregarParametroValues("FEC_ALTA", "NOW()");
         queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", "null");
@@ -63,13 +63,8 @@ public class Capilla {
         queryHelper.agregarParametroValues("NUM_LARGO", String.valueOf(capillaDto.getLargo()));
         queryHelper.agregarParametroValues("NUM_ALTO", String.valueOf(capillaDto.getAlto()));
         queryHelper.agregarParametroValues("ID_VELATORIO", String.valueOf(capillaDto.getIdVelatorio()));
-//        queryHelper.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
-//        queryHelper.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(usuario.getId()));
-//        queryHelper.agregarParametroValues("FEC_ALTA", "NOW()");
         queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(usuario.getId()));
         queryHelper.agregarParametroValues("FEC_ACTUALIZACION", "NOW()");
-//        queryHelper.agregarParametroValues("ID_USUARIO_BAJA", "null");
-//        queryHelper.agregarParametroValues("FEC_BAJA", "null");
         // todo - se puede detallar mas el where para que reciba mas parametros que nos diga el tipo de comparacion etc.
         queryHelper.addWhere("ID_CAPILLA = " + capillaDto.getIdCapilla());
 
@@ -85,9 +80,8 @@ public class Capilla {
 
     public DatosRequest cambiarEstatus(Long idCapilla, UsuarioDto usuario) {
         DatosRequest datos = new DatosRequest();
-//        QueryHelper queryHelper = new QueryHelper("update svc_capillas");
         String query = "UPDATE SVC_CAPILLA SET " +
-//                "CVE_ESTATUS = !CVE_ESTATUS, " +
+                "CVE_ESTATUS = !CVE_ESTATUS, " +
                 "FEC_BAJA = now(), " +
                 "ID_USUARIO_BAJA = " + usuario.getId() +
                 " WHERE ID_CAPILLA = " + idCapilla;
@@ -116,7 +110,7 @@ public class Capilla {
                 "CAN_CAPACIDAD AS capacidad, " +
                 "NUM_LARGO AS largo, " +
                 "NUM_ALTO AS alto, " +
-//                "CVE_ESTATUS AS estatus, " +
+                "CVE_ESTATUS AS estatus, " +
                 "velatorio.ID_VELATORIO AS velatorioId, " +
                 "velatorio.NOM_VELATORIO AS nombreVelatorio " +
                 "FROM SVC_CAPILLA capilla " +
@@ -126,16 +120,11 @@ public class Capilla {
                 "AND (" + filtros.getIdCapilla() + " IS NULL OR capilla.ID_CAPILLA = " + filtros.getIdCapilla() + ") " +
                 "AND (" + filtros.getNombreCapilla() + " IS NULL OR capilla.NOM_CAPILLA = " + filtros.getNombreCapilla() + ") " +
                 "GROUP BY ID_CAPILLA";
-//                "velatorio.ID_VELATORIO = " + filtros.getIdVelatorio();
-        System.out.println("*********** query ************");
-        System.out.println(query);
-
         Map<String, Object> parametros = new HashMap<>();
         parametros.put(
                 AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes())
         );
-//        request.setDatos(parametros);
         request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
         request.getDatos().remove("datos");
         return request;
@@ -155,7 +144,7 @@ public class Capilla {
                 "CAN_CAPACIDAD AS capacidad, " +
                 "NUM_LARGO AS largo, " +
                 "NUM_ALTO AS alto, " +
-//                "CVE_ESTATUS AS estatus, " +
+                "CVE_ESTATUS AS estatus, " +
                 "velatorio.ID_VELATORIO AS idVelatorio, " +
                 "velatorio.NOM_VELATORIO AS nombreVelatorio " +
                 "FROM SVC_CAPILLA capilla " +
@@ -167,8 +156,6 @@ public class Capilla {
         parametros.put(AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes()));
         datos.setDatos(parametros);
-        System.out.println("***********************************");
-        System.out.println(query);
         return datos;
     }
 
