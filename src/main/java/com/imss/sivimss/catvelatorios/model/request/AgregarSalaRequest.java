@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class AgregarSalaRequest {
     @JsonProperty
+    private int idSala;
+    @JsonProperty
     private String nombreSala;
     @JsonProperty
     private String tipoSala;
