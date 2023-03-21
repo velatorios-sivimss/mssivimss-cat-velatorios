@@ -31,7 +31,6 @@ public class GestionarSalas {
         q.agregarParametroValues("ID_USUARIO_ALTA",String.valueOf(user.getId()));
         q.agregarParametroValues("IND_ESTATUS","1");
         String query = q.obtenerQueryInsertar();
-        log.info(query);
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);
