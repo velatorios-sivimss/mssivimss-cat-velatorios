@@ -53,4 +53,14 @@ public class GestionarSalas {
         dr.setDatos(parametro);
         return dr;
     }
+
+    public DatosRequest cambiarEstatus(int idSala, UsuarioDto user) {
+        DatosRequest dr = new DatosRequest();
+        Map<String, Object> parametro = new HashMap<>();
+        String query = "UPDATE SVC_SALA SET IND_ESTATUS=!IND_ESTATUS, FEC_ACTUALIZACION=NOW() , FEC_BAJA=NOW(), ID_USUARIO_BAJA = '" + user.getId() + "'  WHERE ID_SALA = " + idSala;
+        String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
+        parametro.put(AppConstantes.QUERY, encoded);
+        dr.setDatos(parametro);
+        return dr;
+    }
 }

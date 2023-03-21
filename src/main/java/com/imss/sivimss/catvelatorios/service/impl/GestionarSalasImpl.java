@@ -9,6 +9,7 @@ import com.imss.sivimss.catvelatorios.util.AppConstantes;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
 import com.imss.sivimss.catvelatorios.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.catvelatorios.util.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 @Service
+@Slf4j
 public class GestionarSalasImpl implements GestionarSalasServices {
     @Value("${endpoints.dominio-consulta}")
     private String urlDominioConsulta;
@@ -43,7 +45,11 @@ public class GestionarSalasImpl implements GestionarSalasServices {
 
     @Override
     public Response<?> cambiarEstatus(DatosRequest request, Authentication authentication) throws IOException {
-        return null;
+        UsuarioDto usuarioDto = json.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+        AgregarSalaRequest  salasInfo = json.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)),AgregarSalaRequest.class);
+        return providerRestTemplate.consumirServicio(gs.cambiarEstatus(salasInfo.getIdSala(), usuarioDto).getDatos(),
+                urlDominioConsulta + "/generico/actualizar",
+                authentication);
     }
 
     @Override

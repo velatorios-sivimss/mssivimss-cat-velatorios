@@ -30,11 +30,11 @@ public class GestionarSalasController {
     public Response<?> actualizarSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
         return gestion.modificarSalas(request, authentication);
     }
-//
-//    @PostMapping("articulos/cambiar-estatus")
-//    public Response<?> cambiarEstatusArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-//        return gestion.modificarEstatus(request, authentication);
-//    }
+
+    @PostMapping("salas/cambiar-estatus")
+    public Response<?> cambiarEstatusSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        return gestion.cambiarEstatus(request, authentication);
+    }
 //
 //    @PostMapping("articulos/buscar")
 //    public Response<?> buscarArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
