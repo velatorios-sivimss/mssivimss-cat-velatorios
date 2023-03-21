@@ -1,5 +1,6 @@
 package com.imss.sivimss.catvelatorios.beans;
 
+import com.imss.sivimss.catvelatorios.model.request.AgregarArticuloRequest;
 import com.imss.sivimss.catvelatorios.model.request.AgregarSalaRequest;
 import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
@@ -31,6 +32,22 @@ public class GestionarSalas {
         q.agregarParametroValues("ID_USUARIO_ALTA",String.valueOf(user.getId()));
         q.agregarParametroValues("IND_ESTATUS","1");
         String query = q.obtenerQueryInsertar();
+        String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
+        parametro.put(AppConstantes.QUERY, encoded);
+        dr.setDatos(parametro);
+        return dr;
+    }
+
+    public DatosRequest modificarSala (AgregarSalaRequest request, UsuarioDto user){
+        DatosRequest dr = new DatosRequest();
+        Map<String, Object> parametro = new HashMap<>();
+        final QueryHelper q = new QueryHelper("UPDATE SVC_SALA");
+        q.agregarParametroValues("NOM_SALA", "'" + request.getNombreSala() + "'");
+        q.agregarParametroValues("CAN_CAPACIDAD",String.valueOf(request.getCapacidadSala()));
+        q.agregarParametroValues("FEC_ACTUALIZACION","NOW()");
+        q.agregarParametroValues("ID_USUARIO_MODIFICA",String.valueOf(user.getId()));
+        q.addWhere("ID_SALA = " + request.getIdSala());
+        String query = q.obtenerQueryActualizar();
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);

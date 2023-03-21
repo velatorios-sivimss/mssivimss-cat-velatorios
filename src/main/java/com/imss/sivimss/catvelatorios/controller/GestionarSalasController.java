@@ -26,10 +26,10 @@ public class GestionarSalasController {
         return gestion.agregarSalas(request, authentication);
     }
 
-//    @PostMapping("articulos/modificar")
-//    public Response<?> actualizarArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-//        return gestion.modificarArticulo(request, authentication);
-//    }
+    @PostMapping("salas/modificar")
+    public Response<?> actualizarSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        return gestion.modificarSalas(request, authentication);
+    }
 //
 //    @PostMapping("articulos/cambiar-estatus")
 //    public Response<?> cambiarEstatusArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {

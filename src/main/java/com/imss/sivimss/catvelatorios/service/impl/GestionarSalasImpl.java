@@ -35,7 +35,10 @@ public class GestionarSalasImpl implements GestionarSalasServices {
 
     @Override
     public Response<?> modificarSalas(DatosRequest request, Authentication authentication) throws IOException {
-        return null;
+        AgregarSalaRequest  salasInfo = json.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)),AgregarSalaRequest.class);
+        UsuarioDto usuarioDto = json.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+        return providerRestTemplate.consumirServicio(gs.modificarSala(salasInfo,usuarioDto).getDatos(),
+                urlDominioConsulta + "/generico/actualizar", authentication);
     }
 
     @Override
