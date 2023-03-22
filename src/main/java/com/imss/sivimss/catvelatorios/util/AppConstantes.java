@@ -33,7 +33,7 @@ public class AppConstantes {
 	public static final String FORBIDDENEXCEPTION_MENSAJE  = "No tiene autorización para realizar la solicitud.";
 	
 	public static final String INDESTATUS  = "IND_ESTATUS";
-	public static final String NOW  = "NOW()";
+	public static final String CURRENT_TIMESTAMP  = "CURRENT_TIMESTAMP()";
 	public static final String PALABRA  = "palabra";
 
 	private AppConstantes() {
