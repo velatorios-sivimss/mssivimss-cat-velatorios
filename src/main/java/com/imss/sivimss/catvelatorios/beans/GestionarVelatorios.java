@@ -97,14 +97,14 @@ public class GestionarVelatorios {
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_VELATORIO");
 		q.agregarParametroValues("NOM_VELATORIO", "'" + this.nomVelatorio + "'");
 		q.agregarParametroValues("NOM_RESPO_SANITARIO", "'" + this.nomRespoSanitario + "'");
-		q.agregarParametroValues("CVE_ASIGNACION", "'" + this.getCveAsignacion() + "'");
+		q.agregarParametroValues("CVE_ASIGNACION", "'" + this.cveAsignacion + "'");
 		q.agregarParametroValues("DES_CALLE", "'" + this.desCalle + "'");
 		q.agregarParametroValues("NUM_EXT", "'"+ this.numExterior + "'");
 		q.agregarParametroValues("ID_CODIGO_POSTAL", "'" + this.idCodigoPostal +"'");
 		q.agregarParametroValues("NUM_TELEFONO", "'" + this.numTelefono +"'");
 		q.agregarParametroValues("" +AppConstantes.INDESTATUS + "", "1");
 		q.agregarParametroValues("ID_USUARIO_ALTA", "" + this.idUsuarioAlta + "");
-		q.agregarParametroValues("FEC_ALTA", ""+AppConstantes.NOW+"");
+		q.agregarParametroValues("FEC_ALTA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
 		q.agregarParametroValues("ID_DELEGACION", "" + this.idDelegacion + "");
 		
 		String query = q.obtenerQueryInsertar();
@@ -120,17 +120,17 @@ public class GestionarVelatorios {
 		final QueryHelper q = new QueryHelper("UPDATE SVC_VELATORIO");
 		q.agregarParametroValues("NOM_VELATORIO", "'" + this.nomVelatorio + "'");
 		q.agregarParametroValues("NOM_RESPO_SANITARIO", "'" + this.nomRespoSanitario + "'");
-		q.agregarParametroValues("CVE_ASIGNACION", "'" + this.getCveAsignacion() + "'");
+		q.agregarParametroValues("CVE_ASIGNACION", "'" + this.cveAsignacion + "'");
 		q.agregarParametroValues("DES_CALLE", "'" + this.desCalle + "'");
 		q.agregarParametroValues("NUM_EXT", "'"+ this.numExterior + "'");
 		q.agregarParametroValues("ID_CODIGO_POSTAL", "'" + this.idCodigoPostal +"'");
 		q.agregarParametroValues("NUM_TELEFONO", "'" + this.numTelefono +"'");
 		q.agregarParametroValues("" +AppConstantes.INDESTATUS + "", "" + this.indEstatus +"");
 		q.agregarParametroValues("ID_USUARIO_MODIFICA", "'" + this.idUsuarioModifica + "'");
-		q.agregarParametroValues("FEC_ACTUALIZACION", ""+AppConstantes.NOW+"");
+		q.agregarParametroValues("FEC_ACTUALIZACION", ""+AppConstantes.CURRENT_TIMESTAMP+"");
 		q.agregarParametroValues("ID_DELEGACION", "'" + this.idDelegacion +"'");
 		if(this.indEstatus==0) {
-			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.NOW+"");
+			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
 			q.agregarParametroValues("ID_USUARIO_BAJA", "'" + this.idUsuarioBaja + "'");
 		}
 		
@@ -170,8 +170,8 @@ public class GestionarVelatorios {
 		final QueryHelper q = new QueryHelper("UPDATE SVC_VELATORIO");
 		q.agregarParametroValues("" +AppConstantes.INDESTATUS + "", "" + this.indEstatus +"");
 		if(this.indEstatus==0) {
-			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.NOW+"");
-			q.agregarParametroValues("ID_USUARIO_BAJA", "'" + this.idUsuarioBaja + "'");
+			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
+			q.agregarParametroValues("ID_USUARIO_BAJA",  "'" + this.idUsuarioBaja + "'");
 		} 
 		q.addWhere("ID_VELATORIO = " + this.idVelatorio);
 			String query = q.obtenerQueryActualizar();
