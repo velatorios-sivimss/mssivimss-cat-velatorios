@@ -8,11 +8,7 @@ package com.imss.sivimss.catvelatorios.util;
  * @date 24 nov. 2022
  */
 public class AppConstantes {
-	
-	public static final String NUMERO_DE_PAGINA = "0";
-	public static final String TAMANIO_PAGINA = "10";
-	public static final String ORDER_BY= "id";
-	public static final String ORDER_DIRECTION= "asc";
+
 	public static final String SUPERVISOR = "Supervisor";
 	
 	public static final String DATOS= "datos";

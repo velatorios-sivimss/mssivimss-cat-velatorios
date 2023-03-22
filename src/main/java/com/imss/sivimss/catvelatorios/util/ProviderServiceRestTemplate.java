@@ -3,18 +3,15 @@ package com.imss.sivimss.catvelatorios.util;
 import java.io.IOException;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 
 import com.google.gson.Gson;
 import com.imss.sivimss.catvelatorios.security.jwt.JwtTokenProvider;
-
-import lombok.Builder;
 
 
 @Service
@@ -24,13 +21,13 @@ public class ProviderServiceRestTemplate {
 	private RestTemplateUtil restTemplateUtil;
 
 	@Autowired
-	private JwtTokenProvider jwtTokenProvider; 
-	
-	private static final Logger log = LoggerFactory.getLogger(ProviderServiceRestTemplate.class);
+	private JwtTokenProvider jwtTokenProvider;
+
+	private static Logger log = LogManager.getLogger(ProviderServiceRestTemplate.class);
 	
 	public Response<?> consumirServicio(Map<String, Object> dato, String url,Authentication authentication) throws IOException {
 		try {
-			Response respuestaGenerado=restTemplateUtil.sendPostRequestByteArrayToken(url, new EnviarDatosRequest(dato),jwtTokenProvider.createToken((String) authentication.getPrincipal()), Response.class);
+			Response respuestaGenerado=restTemplateUtil.sendPostRequestByteArrayToken(url, new DatosRequest(dato),jwtTokenProvider.createTokenTest(authentication.getPrincipal().toString()), Response.class);
 			return validarResponse(respuestaGenerado);
 		} catch (IOException exception) {
 			log.error("Ha ocurrido un error al recuperar la informacion");

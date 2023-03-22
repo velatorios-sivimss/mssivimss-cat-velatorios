@@ -1,16 +1,14 @@
 package com.imss.sivimss.catvelatorios.util;
 
-import java.io.Serializable;
-
-
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Builder
-@Setter
+import java.io.Serializable;
+
 @Getter
+@Setter
+@Builder
 public class Response<T> implements Serializable {
 	
 	/**
@@ -24,7 +22,7 @@ public class Response<T> implements Serializable {
 	
 	private String mensaje;
 	
-	private T datos;
+	private transient T datos;
 	
 	public Response() {
 		

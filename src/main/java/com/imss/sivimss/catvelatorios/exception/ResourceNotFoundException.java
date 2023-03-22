@@ -11,52 +11,38 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @date 24 nov. 2022
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-public class ResourceNotFoundException extends RuntimeException{
+public class ResourceNotFoundException extends RuntimeException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4819422371941925970L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -4819422371941925970L;
 
-	private String nombreRecurso;
-	
-	private String nombreCampo;
-	
-	private String valorCampo;
+    private final String nombreRecurso;
 
-	public ResourceNotFoundException(String nombreRecurso, String nombreCampo, String valorCampo) {
-		super(String.format("%s no se encontro con %s : %s ", nombreRecurso, nombreCampo, valorCampo));
-		
-		this.nombreRecurso = nombreRecurso;
-		this.nombreCampo = nombreCampo;
-		this.valorCampo = valorCampo;
-	}
+    private final String nombreCampo;
 
-	public String getNombreRecurso() {
-		return nombreRecurso;
-	}
+    private final String valorCampo;
 
-	public void setNombreRecurso(String nombreRecurso) {
-		this.nombreRecurso = nombreRecurso;
-	}
+    public ResourceNotFoundException(String nombreRecurso, String nombreCampo, String valorCampo) {
+        super(String.format("%s no se encontro con %s : %s ", nombreRecurso, nombreCampo, valorCampo));
 
-	public String getNombreCampo() {
-		return nombreCampo;
-	}
+        this.nombreRecurso = nombreRecurso;
+        this.nombreCampo = nombreCampo;
+        this.valorCampo = valorCampo;
+    }
 
-	public void setNombreCampo(String nombreCampo) {
-		this.nombreCampo = nombreCampo;
-	}
+    public String getNombreRecurso() {
+        return nombreRecurso;
+    }
 
-	public String getValorCampo() {
-		return valorCampo;
-	}
+    public String getNombreCampo() {
+        return nombreCampo;
+    }
 
-	public void setValorCampo(String valorCampo) {
-		this.valorCampo = valorCampo;
-	}
-	
-	
-	
-	
+    public String getValorCampo() {
+        return valorCampo;
+    }
+
+
 }

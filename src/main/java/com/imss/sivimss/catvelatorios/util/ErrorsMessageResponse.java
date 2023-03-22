@@ -40,16 +40,8 @@ public class ErrorsMessageResponse {
 
 	}
 
-	public void setError(boolean error) {
-		this.error = error;
-	}
-
 	public long getCodigo() {
 		return codigo;
-	}
-
-	public void setCodigo(long codigo) {
-		this.codigo = codigo;
 	}
 
 	public boolean isError() {
@@ -60,16 +52,7 @@ public class ErrorsMessageResponse {
 		return mensaje;
 	}
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
-	}
-
 	public String getDatos() {
 		return datos;
 	}
-
-	public void setDatos(String datos) {
-		this.datos = datos;
-	}
-
 }

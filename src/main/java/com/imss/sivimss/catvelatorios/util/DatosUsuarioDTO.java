@@ -2,16 +2,9 @@ package com.imss.sivimss.catvelatorios.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @JsonRootName(value = "DatosUsuario")
 public class DatosUsuarioDTO {
 	@JsonProperty
@@ -21,8 +14,10 @@ public class DatosUsuarioDTO {
 	public String matricula;
 	
 	@JsonProperty
-	public Integer IDOOAD;
+	public Integer idOoad;
 	
 	@JsonProperty
-	public String CVEDEPARTAMENTO;
+	public String cveDepartamento;
+
+
 }

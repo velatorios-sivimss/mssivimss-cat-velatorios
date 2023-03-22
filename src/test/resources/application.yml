@@ -1,5 +1,4 @@
 server:
-  port: 8080
   servlet:
     contextPath: /mssivimss-cat-velatorios
 spring:
@@ -8,12 +7,10 @@ spring:
       matching-strategy: ANT_PATH_MATCHER
   main:
     allow-circular-references: true
-
   servlet:
     multipart:
       max-file-size: 30MB
       max-request-size: 30MB
-
 logging:
   level:
     root: info
@@ -25,10 +22,10 @@ logos:
   msit_logo_sistema: /sintrans_data/LOGOS/logoSistema.png
 
 endpoints:
-  consulta-ooads: http://localhost:8090/dominio/
-  paginado-unidad: http://localhost:8090/dominio/ooad/paginacion
-  dominio-consulta: http://localhost:8094/mssivimss-mod-catalogos
-  ms-reportes: http://localhost:8088/mssivimss-reportes-jpr
+  consulta-ooads: http://localhost:1080/dominio/
+  paginado-unidad: http://localhost:1080/dominio/ooad/paginacion
+  dominio-consulta: http://localhost:1080/mssivimss-mod-catalogos
+  ms-reportes: http://localhost:1080/mssivimss-reportes-jpr
 
 jwt:
   secretkey-flujo: funcionamuybien
