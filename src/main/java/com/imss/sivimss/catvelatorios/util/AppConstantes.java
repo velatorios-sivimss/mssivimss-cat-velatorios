@@ -8,7 +8,7 @@ package com.imss.sivimss.catvelatorios.util;
  * @date 24 nov. 2022
  */
 public class AppConstantes {
-	
+	public static final String CIRCUITBREAKER = "El servicio no responde, no permite más llamadas.";
 	public static final String NUMERO_DE_PAGINA = "0";
 	public static final String TAMANIO_PAGINA = "10";
 	public static final String ORDER_BY= "id";

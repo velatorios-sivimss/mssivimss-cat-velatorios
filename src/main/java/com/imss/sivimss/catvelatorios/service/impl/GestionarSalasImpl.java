@@ -54,6 +54,7 @@ public class GestionarSalasImpl implements GestionarSalasServices {
 
     @Override
     public Response<?> buscarSalas(DatosRequest request, Authentication authentication) throws IOException {
-        return null;
+        return providerRestTemplate.consumirServicio(gs.buscarSala(request).getDatos(), urlDominioConsulta + "/generico/paginado",
+                authentication);
     }
 }

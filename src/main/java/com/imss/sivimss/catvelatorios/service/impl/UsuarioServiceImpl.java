@@ -2,7 +2,6 @@ package com.imss.sivimss.catvelatorios.service.impl;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,17 +18,14 @@ import com.google.gson.Gson;
 import com.imss.sivimss.catvelatorios.beans.Usuario;
 import com.imss.sivimss.catvelatorios.exception.BadRequestException;
 import com.imss.sivimss.catvelatorios.model.request.ReporteDto;
-import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import com.imss.sivimss.catvelatorios.model.request.UsuarioFiltros;
 import com.imss.sivimss.catvelatorios.model.request.UsuarioRequest;
 import com.imss.sivimss.catvelatorios.model.response.UsuarioResponse;
 import com.imss.sivimss.catvelatorios.service.UsuarioService;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
 import com.imss.sivimss.catvelatorios.util.ConvertirGenerico;
-import com.imss.sivimss.catvelatorios.util.DatosReporteDTO;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
 import com.imss.sivimss.catvelatorios.util.ProviderServiceRestTemplate;
-import com.imss.sivimss.catvelatorios.util.QueryHelper;
 import com.imss.sivimss.catvelatorios.util.Response;
 
 @Service
