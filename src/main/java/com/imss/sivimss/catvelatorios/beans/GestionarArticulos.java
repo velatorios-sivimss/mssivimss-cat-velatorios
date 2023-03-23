@@ -39,7 +39,7 @@ public class GestionarArticulos {
         q.agregarParametroValues("ID_CUENTA_PART_PRESU", String.valueOf(request.getIdCuentaContable()));
         q.agregarParametroValues("ID_PRODUCTOS_SERVICIOS", String.valueOf(request.getIdClaveSAT()));
         q.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
-        q.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(user.getId()));
+        q.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(user.getIdUsuario()));
         q.agregarParametroValues("FEC_ALTA", "NOW()");
         String query = q.obtenerQueryInsertar() + " $$ " + insertArticuloMedida(agm);
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
@@ -80,7 +80,7 @@ public class GestionarArticulos {
         q.agregarParametroValues("ID_CUENTA_PART_PRESU", String.valueOf(request.getIdCuentaContable()));
         q.agregarParametroValues("ID_PRODUCTOS_SERVICIOS", String.valueOf(request.getIdClaveSAT()));
         q.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
-        q.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(user.getId()));
+        q.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(user.getIdUsuario()));
         q.agregarParametroValues("FEC_ACTUALIZACION", "NOW()");
         q.addWhere("ID_ARTICULO =" + request.getIdArticulo());
         String query = q.obtenerQueryActualizar();
@@ -108,7 +108,7 @@ public class GestionarArticulos {
     public DatosRequest cambiarEstatus(int idArticulo, UsuarioDto user) {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
-        String query = "UPDATE SVT_ARTICULO SET CVE_ESTATUS=!CVE_ESTATUS, FEC_ACTUALIZACION=NOW() , FEC_BAJA=NOW(), ID_USUARIO_BAJA = '" + user.getId() + "'  WHERE ID_ARTICULO = " + idArticulo;
+        String query = "UPDATE SVT_ARTICULO SET CVE_ESTATUS=!CVE_ESTATUS, FEC_ACTUALIZACION=NOW() , FEC_BAJA=NOW(), ID_USUARIO_BAJA = '" + user.getIdUsuario() + "'  WHERE ID_ARTICULO = " + idArticulo;
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);
