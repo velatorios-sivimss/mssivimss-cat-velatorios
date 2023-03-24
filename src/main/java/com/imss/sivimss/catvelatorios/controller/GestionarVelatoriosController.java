@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/velatorio")
 public class GestionarVelatoriosController {
 	
+	@Autowired
 	private GestionarVelatorioService velatorioService;
 	
 	@Autowired
@@ -99,6 +100,18 @@ public class GestionarVelatoriosController {
 	public CompletableFuture<?> cambiarEstatus(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
 		Response<?> response = velatorioService.cambiarEstatusVelatorio(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+
+	}
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	@PostMapping("/buscar/cp")
+	public  CompletableFuture<?> buscarCp(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response = velatorioService.obtenerCp(request,authentication);		
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 

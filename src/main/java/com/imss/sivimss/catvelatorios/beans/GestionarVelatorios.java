@@ -251,4 +251,15 @@ public class GestionarVelatorios {
 				
 		}
 
+		public DatosRequest obtenerCp(DatosRequest request) {
+			String palabra = request.getDatos().get("palabra").toString();
+			String query = "SELECT ID_CODIGO_POSTAL AS idCodigoPostal, DES_COLONIA AS colonia, "
+					+ "DES_ESTADO AS estado, DES_MNPIO AS municipio "
+					+ "FROM svc_cp WHERE CVE_CODIGO_POSTAL="+ Integer.parseInt(palabra) + "";
+			request.getDatos().remove("palabra");
+			request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
+
+			return request;
+		}
+
 		}
