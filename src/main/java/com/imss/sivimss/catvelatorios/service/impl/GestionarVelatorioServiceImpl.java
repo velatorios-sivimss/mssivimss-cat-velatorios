@@ -64,7 +64,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		 
 			if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
 				velatorio= new GestionarVelatorios(velatorioRequest);
-				velatorio.setIdUsuarioAlta(usuarioDto.getId());
+				velatorio.setIdUsuarioAlta(usuarioDto.getIdUsuario());
 				return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
 						authentication);
 			}
@@ -82,8 +82,8 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		}
 		if(!validarRegistroActualizar(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio(), authentication)) {
 		velatorio= new GestionarVelatorios(velatorioRequest);
-		velatorio.setIdUsuarioModifica(usuarioDto.getId().toString());
-		velatorio.setIdUsuarioBaja(usuarioDto.getId());
+		velatorio.setIdUsuarioModifica(usuarioDto.getIdUsuario().toString());
+		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
 		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
 		}
@@ -100,8 +100,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		}
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIndEstatus(velatorioRequest.getIndEstatus());
-		velatorio.setIdUsuarioBaja(usuarioDto.getId());
-		velatorio.setIdUsuarioAlta(usuarioDto.getId());
+		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
 		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
 	}
@@ -124,6 +123,12 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	return !rst.toString().equals("[]");
 		}
 		 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
+	}
+
+	@Override
+	public Response<?> obtenerCp(DatosRequest request, Authentication authentication) throws IOException {
+		return providerRestTemplate.consumirServicio(velatorio.obtenerCp(request).getDatos(), urlDominioConsulta + "/generico/consulta",
+				authentication);	
 	}
 	
 }
