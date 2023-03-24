@@ -1,6 +1,6 @@
 package com.imss.sivimss.catvelatorios.controller;
 
-import com.imss.sivimss.catvelatorios.service.GestionarArticulosServices;
+import com.imss.sivimss.catvelatorios.service.GestionarSalasServices;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
 import com.imss.sivimss.catvelatorios.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.catvelatorios.util.Response;
@@ -24,43 +24,51 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @RestController
 @RequestMapping("/")
-public class GestionarArticulosController {
-    @Autowired
-    GestionarArticulosServices gestion;
+public class GestionarSalasController {
 
+    @Autowired
+    GestionarSalasServices gestion;
     @Autowired
     private ProviderServiceRestTemplate providerRestTemplate;
 
+
     @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @TimeLimiter(name = "msflujo")
-    @PostMapping("articulos/agregar")
-    public Response<?> agregarArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-        return gestion.agregarArticulos(request, authentication);
+    @PostMapping("salas/agregar")
+    public CompletableFuture<?>  agregarSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.agregarSalas(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
     }
 
     @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @TimeLimiter(name = "msflujo")
-    @PostMapping("articulos/modificar")
-    public Response<?> actualizarArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-        return gestion.modificarArticulo(request, authentication);
+    @PostMapping("salas/modificar")
+    public CompletableFuture<?> actualizarSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response =  gestion.modificarSalas(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
     }
 
     @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @TimeLimiter(name = "msflujo")
-    @PostMapping("articulos/cambiar-estatus")
-    public Response<?> cambiarEstatusArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-        return gestion.modificarEstatus(request, authentication);
+    @PostMapping("salas/cambiar-estatus")
+    public CompletableFuture<?> cambiarEstatusSala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.cambiarEstatus(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
     }
-
     @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
     @TimeLimiter(name = "msflujo")
-    @PostMapping("articulos/buscar")
-    public Response<?> buscarArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
-        return gestion.buscarArticulos(request, authentication);
+    @PostMapping("salas/buscar")
+    public CompletableFuture<?> buscarASala(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarSalas(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
     }
 
     /**
@@ -88,5 +96,4 @@ public class GestionarArticulosController {
         return CompletableFuture
                 .supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
     }
-
 }

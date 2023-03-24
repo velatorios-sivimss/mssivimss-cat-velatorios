@@ -25,6 +25,9 @@ public interface GestionarVelatorioService {
 	
 
 	public Response<?> cambiarEstatusVelatorio(DatosRequest request, Authentication authentication) throws IOException;
+
+
+	public Response<?> obtenerCp(DatosRequest request, Authentication authentication)throws IOException;
 	
 
 }
