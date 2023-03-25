@@ -38,9 +38,12 @@ public class GestionarVelatoriosController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	@PostMapping("/catalogo")
-	public Response<?> catalogo(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	public CompletableFuture<?> catalogo(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
-		return velatorioService.consultaGeneral(request,authentication);
+		Response<?> response = velatorioService.consultaGeneral(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+
       
 	}
 	

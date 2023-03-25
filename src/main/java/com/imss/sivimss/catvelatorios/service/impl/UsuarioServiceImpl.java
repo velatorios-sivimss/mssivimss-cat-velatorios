@@ -103,7 +103,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 		UsuarioRequest usuarioRequest = gson.fromJson(datosJson, UsuarioRequest.class);
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveAlta(usuarioDto.getCveMatricula());
+		usuario.setClaveAlta(usuarioDto.getIdUsuario().toString());
 		
 		return providerRestTemplate.consumirServicio(usuario.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
 				authentication);
@@ -121,7 +121,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveModifica(usuarioDto.getCveMatricula());
+		usuario.setClaveModifica(usuarioDto.getIdUsuario().toString());
 		
 		return providerRestTemplate.consumirServicio(usuario.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
@@ -139,7 +139,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveBaja(usuarioDto.getCveMatricula());
+		usuario.setClaveBaja(usuarioDto.getIdUsuario().toString());
 		return providerRestTemplate.consumirServicio(usuario.cambiarEstatus().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
 	}
