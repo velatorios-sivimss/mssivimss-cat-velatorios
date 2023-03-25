@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 		UsuarioRequest usuarioRequest = gson.fromJson(datosJson, UsuarioRequest.class);
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveAlta(usuarioDto.getCorreo());
+		usuario.setClaveAlta(usuarioDto.getCveMatricula());
 		
 		return providerRestTemplate.consumirServicio(usuario.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
 				authentication);
@@ -120,7 +121,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveModifica(usuarioDto.getCorreo());
+		usuario.setClaveModifica(usuarioDto.getCveMatricula());
 		
 		return providerRestTemplate.consumirServicio(usuario.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
@@ -138,7 +139,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		Usuario usuario= new Usuario(usuarioRequest);
-		usuario.setClaveBaja(usuarioDto.getCorreo());
+		usuario.setClaveBaja(usuarioDto.getCveMatricula());
 		return providerRestTemplate.consumirServicio(usuario.cambiarEstatus().getDatos(), urlDominioConsulta + "/generico/actualizar",
 				authentication);
 	}
