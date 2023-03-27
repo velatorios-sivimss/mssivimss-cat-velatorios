@@ -7,13 +7,13 @@ import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
 import com.imss.sivimss.catvelatorios.util.QueryHelper;
+import com.imss.sivimss.catvelatorios.util.QueryUtil;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Capilla {
-    private CapillaDto capilla;
 
     /**
      * Inserta una capilla con los campos necesarios para su creacion
@@ -23,17 +23,16 @@ public class Capilla {
     public DatosRequest insertar(CapillaDto capillaDto, UsuarioDto usuario) {
         DatosRequest datos = new DatosRequest();
         Map<String, Object> parametrosRequest = new HashMap<>();
-        // todo - falta hacer la funcionalidad para que se auto-genere el id del sistema
         QueryHelper queryHelper = new QueryHelper("INSERT INTO SVC_CAPILLA");
-        // todo - ver como evitar el uso de las comillas para evitar errores
+
         queryHelper.agregarParametroValues("NOM_CAPILLA", "'" + capillaDto.getNombre() + "'");
         queryHelper.agregarParametroValues("CAN_CAPACIDAD", String.valueOf(capillaDto.getCapacidad()));
         queryHelper.agregarParametroValues("NUM_LARGO", String.valueOf(capillaDto.getLargo()));
         queryHelper.agregarParametroValues("NUM_ALTO", String.valueOf(capillaDto.getAlto()));
         queryHelper.agregarParametroValues("ID_VELATORIO", String.valueOf(capillaDto.getIdVelatorio()));
         queryHelper.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
-        queryHelper.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(usuario.getId()));
-        queryHelper.agregarParametroValues("FEC_ALTA", "NOW()");
+        queryHelper.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(usuario.getIdUsuario()));
+        queryHelper.agregarParametroValues("FEC_ALTA", "CURRENT_TIMESTAMP");
         queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", "null");
         queryHelper.agregarParametroValues("FEC_ACTUALIZACION", "null");
         queryHelper.agregarParametroValues("ID_USUARIO_BAJA", "null");
@@ -56,6 +55,7 @@ public class Capilla {
      */
     public DatosRequest actualizar(CapillaDto capillaDto, UsuarioDto usuario) {
         DatosRequest datos = new DatosRequest();
+
         QueryHelper queryHelper = new QueryHelper("UPDATE SVC_CAPILLA");
 
         queryHelper.agregarParametroValues("NOM_CAPILLA", "'" + capillaDto.getNombre() + "'");
@@ -63,8 +63,8 @@ public class Capilla {
         queryHelper.agregarParametroValues("NUM_LARGO", String.valueOf(capillaDto.getLargo()));
         queryHelper.agregarParametroValues("NUM_ALTO", String.valueOf(capillaDto.getAlto()));
         queryHelper.agregarParametroValues("ID_VELATORIO", String.valueOf(capillaDto.getIdVelatorio()));
-        queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(usuario.getId()));
-        queryHelper.agregarParametroValues("FEC_ACTUALIZACION", "NOW()");
+        queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(usuario.getIdUsuario()));
+        queryHelper.agregarParametroValues("FEC_ACTUALIZACION", "CURRENT_TIMESTAMP");
         // todo - se puede detallar mas el where para que reciba mas parametros que nos diga el tipo de comparacion etc.
         queryHelper.addWhere("ID_CAPILLA = " + capillaDto.getIdCapilla());
 
@@ -82,8 +82,8 @@ public class Capilla {
         DatosRequest datos = new DatosRequest();
         String query = "UPDATE SVC_CAPILLA SET " +
                 "CVE_ESTATUS = !CVE_ESTATUS, " +
-                "FEC_BAJA = now(), " +
-                "ID_USUARIO_BAJA = " + usuario.getId() +
+                "FEC_BAJA = CURRENT_TIMESTAMP, " +
+                "ID_USUARIO_BAJA = " + usuario.getIdUsuario() +
                 " WHERE ID_CAPILLA = " + idCapilla;
 
         Map<String, Object> parametros = new HashMap<>();
@@ -104,23 +104,38 @@ public class Capilla {
     public DatosRequest consultarCapillas(DatosRequest request) {
         Gson gson = new Gson();
         FiltrosCapillas filtros = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), FiltrosCapillas.class);
-        String query = "SELECT " +
-                "ID_CAPILLA AS capillaId, " +
-                "NOM_CAPILLA AS nombre, " +
-                "CAN_CAPACIDAD AS capacidad, " +
-                "NUM_LARGO AS largo, " +
-                "NUM_ALTO AS alto, " +
-                "CVE_ESTATUS AS estatus, " +
-                "velatorio.ID_VELATORIO AS velatorioId, " +
-                "velatorio.NOM_VELATORIO AS nombreVelatorio " +
-                "FROM SVC_CAPILLA capilla " +
-                "JOIN SVC_VELATORIO velatorio ON capilla.ID_VELATORIO = velatorio.ID_VELATORIO " +
-                "WHERE " +
-                "(" + filtros.getIdVelatorio() + " IS NULL OR capilla.ID_VELATORIO = " + filtros.getIdVelatorio() + ") " +
-                "AND (" + filtros.getIdCapilla() + " IS NULL OR capilla.ID_CAPILLA = " + filtros.getIdCapilla() + ") " +
-                "AND (" + filtros.getNombreCapilla() + " IS NULL OR capilla.NOM_CAPILLA = " + filtros.getNombreCapilla() + ") " +
-                "GROUP BY ID_CAPILLA";
+
+        QueryUtil queryUtil = new QueryUtil();
+
+        queryUtil.select()
+                .select("ID_CAPILLA AS capillaId",
+                        "NOM_CAPILLA AS nombre",
+                        "CAN_CAPACIDAD AS capacidad",
+                        "NUM_LARGO AS largo",
+                        "NUM_ALTO AS alto",
+                        "CVE_ESTATUS AS estatus",
+                        "velatorio.ID_VELATORIO AS idVelatorio",
+                        "velatorio.NOM_VELATORIO AS nombreVelatorio")
+                .from("SVC_CAPILLA capilla")
+                .join("SVC_VELATORIO velatorio", "capilla.ID_VELATORIO = velatorio.ID_VELATORIO");
+
+        if (filtros.getIdCapilla() != null) {
+            queryUtil.where("capilla.ID_CAPILLA = :idCapilla")
+                    .setParameter("idCapilla", filtros.getIdCapilla());
+        }
+        if (filtros.getNombreCapilla() != null) {
+            queryUtil.where("nombre.NOM_CAPILLA = :nombreCapilla")
+                    .setParameter("nombreCapilla", filtros.getNombreCapilla());
+        }
+        if (filtros.getIdVelatorio() != null) {
+            queryUtil.where("capilla.ID_VELATORIO = :idVelatorio")
+                    .setParameter("idVelatorio", filtros.getIdVelatorio());
+        }
+
+        queryUtil.orderBy("ID_CAPILLA");
+
         Map<String, Object> parametros = new HashMap<>();
+        String query = queryUtil.build();
         parametros.put(
                 AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes())
@@ -138,21 +153,24 @@ public class Capilla {
      */
     public DatosRequest buscarCapilla(Long idCapilla) {
         DatosRequest datos = new DatosRequest();
-        String query = "SELECT " +
-                "ID_CAPILLA AS idCapilla, " +
-                "NOM_CAPILLA AS nombre, " +
-                "CAN_CAPACIDAD AS capacidad, " +
-                "NUM_LARGO AS largo, " +
-                "NUM_ALTO AS alto, " +
-                "CVE_ESTATUS AS estatus, " +
-                "velatorio.ID_VELATORIO AS idVelatorio, " +
-                "velatorio.NOM_VELATORIO AS nombreVelatorio " +
-                "FROM SVC_CAPILLA capilla " +
-                "JOIN SVC_VELATORIO velatorio ON capilla.ID_VELATORIO = velatorio.ID_VELATORIO " +
-                "WHERE " +
-                "ID_CAPILLA = " + idCapilla +
-                " GROUP BY ID_CAPILLA";
+        QueryUtil queryUtil = new QueryUtil();
+        queryUtil.select("ID_CAPILLA AS idCapilla",
+                        "NOM_CAPILLA AS nombre",
+                        "CAN_CAPACIDAD AS capacidad",
+                        "NUM_LARGO AS largo",
+                        "NUM_ALTO AS alto",
+                        "CVE_ESTATUS AS estatus",
+                        "velatorio.ID_VELATORIO AS idVelatorio",
+                        "velatorio.NOM_VELATORIO AS nombreVelatorio ")
+                .from("SVC_CAPILLA capilla")
+                .join("SVC_VELATORIO velatorio", "capilla.ID_VELATORIO = velatorio.ID_VELATORIO")
+                .where("ID_CAPILLA = :idCapilla")
+                .setParameter("idCapilla", idCapilla)
+                .orderBy("ID_CAPILLA");
+
         Map<String, Object> parametros = new HashMap<>();
+        String query = queryUtil.build();
+
         parametros.put(AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes()));
         datos.setDatos(parametros);
