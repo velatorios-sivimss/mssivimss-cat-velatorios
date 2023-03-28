@@ -1,0 +1,19 @@
+{
+  "error": false,
+  "codigo": 200,
+  "mensaje": "Exito",
+  "datos": [
+    {
+      "idPanteon": "1",
+      "nombrePanteon": "Panteon 1",
+      "descripcionCalle": "Calle 1",
+      "numeroExt": "10",
+      "numeroInt": "101",
+      "idCodigoPostal": "1",
+      "descripcionColonia": "Col 10",
+      "numeroTelefono": "5559894839",
+      "nombreContacto": "Contacto 3",
+      "indEstatus": "1",
+      "idDelegacion": "2"
+    }]
+}

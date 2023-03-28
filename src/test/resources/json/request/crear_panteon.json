@@ -1,0 +1,15 @@
+{
+  "datos": {
+    "idPanteon": "",
+    "nombrePanteon": "Panteon 11",
+    "descripcionCalle": "Calle 1",
+    "numeroExt": "10",
+    "numeroInt": "101",
+    "idCodigoPostal": "1",
+    "descripcionColonia": "Col 10",
+    "numeroTelefono": "5559894839",
+    "nombreContacto": "Contacto 3",
+    "indEstatus": "1",
+    "idDelegacion": "1"
+  }
+}
