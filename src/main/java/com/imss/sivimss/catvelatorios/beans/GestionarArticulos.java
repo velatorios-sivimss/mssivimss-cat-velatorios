@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.xml.bind.DatatypeConverter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Builder
 @Data
@@ -40,7 +41,6 @@ public class GestionarArticulos {
         q.agregarParametroValues("ID_PRODUCTOS_SERVICIOS", String.valueOf(request.getIdClaveSAT()));
         q.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
         q.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(user.getIdUsuario()));
-        q.agregarParametroValues("FEC_ALTA", "NOW()");
         String query = q.obtenerQueryInsertar() + " $$ " + insertArticuloMedida(agm);
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);

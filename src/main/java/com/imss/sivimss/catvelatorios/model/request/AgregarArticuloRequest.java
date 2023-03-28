@@ -25,10 +25,10 @@ public class AgregarArticuloRequest {
     @JsonProperty
     private MedidasModel medidas;
     @JsonProperty
-    private int  idPartidaPresupuestal;
+    private Integer  idPartidaPresupuestal;
     @JsonProperty
-    private int  idCuentaContable;
+    private Integer  idCuentaContable;
     @JsonProperty
-    private int  idClaveSAT;
+    private Integer  idClaveSAT;
 
 }
