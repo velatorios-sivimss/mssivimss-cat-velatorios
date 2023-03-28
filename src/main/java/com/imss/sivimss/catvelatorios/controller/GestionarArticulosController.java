@@ -71,6 +71,95 @@ public class GestionarArticulosController {
                 () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
     }
 
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/buscarGeneral")
+    public CompletableFuture<?> buscarArticuloSinPag(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarArticulosGeneral(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/categorias")
+    public CompletableFuture<?> buscarCategorias(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarCategorias(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/tipo-articulo")
+    public CompletableFuture<?> buscarTipoArticulo(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarTipoArticulos(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/tipo-materiales")
+    public CompletableFuture<?> buscarTipoMateriales(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarTipoMateriales(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/tamanios")
+    public CompletableFuture<?> buscarTamanios(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarTamanios(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/clasificacion-producto")
+    public CompletableFuture<?> buscarClasificacionProducto(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarClasificacionProductos(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/partida-presupuestal")
+    public CompletableFuture<?> buscarPP(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarPartidaPresupuestal(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/cuenta-contable")
+    public CompletableFuture<?> buscarCC(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarCuentaContable(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
+
+    @CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+    @TimeLimiter(name = "msflujo")
+    @PostMapping("articulos/clave-sat")
+    public CompletableFuture<?> buscarClaveSAT(@RequestBody DatosRequest request, Authentication authentication) throws IOException {
+        Response<?> response = gestion.buscarClaveSAT(request, authentication);
+        return CompletableFuture.supplyAsync(
+                () -> new ResponseEntity<>(response,HttpStatus.valueOf(response.getCodigo())));
+    }
     /**
      * fallbacks generico
      *

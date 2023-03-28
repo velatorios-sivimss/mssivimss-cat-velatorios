@@ -83,6 +83,60 @@ public class GestionarArticulosImpl implements GestionarArticulosServices {
                 authentication);
     }
 
+    @Override
+    public Response<?> buscarArticulosGeneral(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.busquedaGeneral(request).getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarCategorias(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarCategorias().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarTipoArticulos(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarTipoArticulos().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarTipoMateriales(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarTipoMateriales().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarTamanios(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarTamanios().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarClasificacionProductos(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarClasificacionProducto().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarPartidaPresupuestal(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarPartidaPresupuestal().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarCuentaContable(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarCuentaContable().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
+    @Override
+    public Response<?> buscarClaveSAT(DatosRequest request, Authentication authentication) throws IOException {
+        return providerRestTemplate.consumirServicio(gestion.buscarClaveSAT().getDatos(), urlDominioConsulta + "/generico/consulta",
+                authentication);
+    }
+
     public Boolean validarRepetido(String desArticulo, Authentication authentication) throws IOException {
         Response<?> response = providerRestTemplate.consumirServicio(gestion.validarRepetido(desArticulo).getDatos(), urlDominioConsulta + "/generico/consulta",
                 authentication);

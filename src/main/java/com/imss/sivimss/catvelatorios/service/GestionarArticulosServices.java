@@ -11,4 +11,13 @@ public interface GestionarArticulosServices {
     Response<?> modificarArticulo(DatosRequest request, Authentication authentication) throws IOException;
     Response<?> modificarEstatus(DatosRequest request, Authentication authentication) throws IOException;
     Response<?> buscarArticulos(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarArticulosGeneral(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarCategorias(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarTipoArticulos(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarTipoMateriales(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarTamanios(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarClasificacionProductos(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarPartidaPresupuestal(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarCuentaContable(DatosRequest request, Authentication authentication) throws IOException;
+    Response<?> buscarClaveSAT(DatosRequest request, Authentication authentication) throws IOException;
 }
