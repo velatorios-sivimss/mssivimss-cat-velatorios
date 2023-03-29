@@ -72,8 +72,8 @@ public class GestionarVelatorios {
 		//Busqueda general
 	public DatosRequest catalogoVelatorio(DatosRequest request) {
 		String query ="SELECT E.ID_VELATORIO AS idVelatorio, E.NOM_VELATORIO AS nomVelatorio, "
-				+ "E.NOM_RESPO_SANITARIO AS NomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
-				+ "E.NUM_EXT AS numExt, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
+				+ "E.NOM_RESPO_SANITARIO AS nomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
+				+ "E.NUM_EXT AS numExterior, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
 				+ "E.DES_COLONIA AS otraColonia, E.ID_DELEGACION AS idDelegacion, D.DES_DELEGACION AS desDelegacion,"
 				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=1 AND ID_VELATORIO=E.ID_VELATORIO) AS salasEmbalsamamiento,"
 				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=0 AND ID_VELATORIO=E.ID_VELATORIO) AS salasCremacion,"
@@ -142,10 +142,10 @@ public class GestionarVelatorios {
 	}
 		//Buscar velatorio por delegacion o velatorio especifico
 	public DatosRequest buscarVelatorio(DatosRequest request) {
-		String palabra = request.getDatos().get("palabra").toString();
+		String palabra = request.getDatos().get(""+AppConstantes.PALABRA+"").toString();
 		String query ="SELECT E.ID_VELATORIO AS idVelatorio, E.NOM_VELATORIO AS nomVelatorio, "
-				+ "E.NOM_RESPO_SANITARIO AS NomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
-				+ "E.NUM_EXT AS numExt, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
+				+ "E.NOM_RESPO_SANITARIO AS nomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
+				+ "E.NUM_EXT AS numExterior, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
 				+ "E.DES_COLONIA AS otraColonia, E.ID_DELEGACION AS idDelegacion, D.DES_DELEGACION AS desDelegacion, "
 				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=1 AND ID_VELATORIO=E.ID_VELATORIO) AS salasEmbalsamamiento, "
 				+ "(SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=0 AND ID_VELATORIO=E.ID_VELATORIO) AS salasCremacion, "
@@ -159,7 +159,7 @@ public class GestionarVelatorios {
 				+ " FROM SVC_VELATORIO E JOIN SVC_DELEGACION D ON E.ID_DELEGACION = D.ID_DELEGACION"
 				+ " WHERE NOM_VELATORIO LIKE '%" + palabra + "%'  OR DES_DELEGACION LIKE '%" + palabra + "%'";
 		log.info(query);
-		request.getDatos().remove("palabra");
+		request.getDatos().remove(""+AppConstantes.PALABRA+"");
 		request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
 		return request;
 	}
@@ -189,8 +189,8 @@ public class GestionarVelatorios {
 					buscar.getVelatorio().equals("") || (buscar.getDelegacion().equals(""))) {
 		
 						query =" SELECT E.ID_VELATORIO AS idVelatorio, E.NOM_VELATORIO AS nomVelatorio,"
-						+ " E.NOM_RESPO_SANITARIO AS NomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
-						+ " E.NUM_EXT AS numExt, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
+						+ " E.NOM_RESPO_SANITARIO AS nomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
+						+ " E.NUM_EXT AS numExterior, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
 						+ " E.DES_COLONIA AS otraColonia, E.ID_DELEGACION AS idDelegacion, D.DES_DELEGACION AS desDelegacion,"
 						+ " (SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=1 AND ID_VELATORIO=E.ID_VELATORIO) AS salasEmbalsamamiento,"
 						+ " (SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=0 AND ID_VELATORIO=E.ID_VELATORIO) AS salasCremacion,"
@@ -208,8 +208,8 @@ public class GestionarVelatorios {
 			
 			}else {
 				query =" SELECT E.ID_VELATORIO AS idVelatorio, E.NOM_VELATORIO AS nomVelatorio,"
-						+ " E.NOM_RESPO_SANITARIO AS NomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
-						+ " E.NUM_EXT AS numExt, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
+						+ " E.NOM_RESPO_SANITARIO AS nomRespoSanitario, E.CVE_ASIGNACION AS cveAsignacion, E.DES_CALLE AS desCalle, "
+						+ " E.NUM_EXT AS numExterior, E.ID_CODIGO_POSTAL AS idCp, E.NUM_TELEFONO AS numTelefono, E.IND_ESTATUS AS estatus,"
 						+ " E.DES_COLONIA AS otraColonia, E.ID_DELEGACION AS idDelegacion, D.DES_DELEGACION AS desDelegacion,"
 						+ " (SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=1 AND ID_VELATORIO=E.ID_VELATORIO) AS salasEmbalsamamiento,"
 						+ " (SELECT COUNT(*) FROM svc_sala WHERE IND_TIPO_SALA=0 AND ID_VELATORIO=E.ID_VELATORIO) AS salasCremacion,"
