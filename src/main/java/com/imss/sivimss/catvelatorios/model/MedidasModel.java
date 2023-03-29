@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class MedidasModel {
     @JsonProperty
-    private Double largo;
+    private Integer largo;
     @JsonProperty
-    private Double ancho;
+    private Integer ancho;
     @JsonProperty
-    private Double alto;
+    private Integer alto;
 }

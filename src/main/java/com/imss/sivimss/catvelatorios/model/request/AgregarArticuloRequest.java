@@ -7,17 +7,17 @@ import lombok.Data;
 @Data
 public class AgregarArticuloRequest {
     @JsonProperty
-    private int idArticulo;
+    private Integer idArticulo;
     @JsonProperty
-    private int  idCategoria;
+    private Integer  idCategoria;
     @JsonProperty
-    private int  idTipoArticulo;
+    private Integer  idTipoArticulo;
     @JsonProperty
-    private int  idTipoMaterial;
+    private Integer  idTipoMaterial;
     @JsonProperty
-    private int  idTamanio;
+    private Integer  idTamanio;
     @JsonProperty
-    private int  idClasificacionProducto;
+    private Integer  idClasificacionProducto;
     @JsonProperty
     private String modeloArticulo;
     @JsonProperty

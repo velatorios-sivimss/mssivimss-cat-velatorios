@@ -55,9 +55,9 @@ public class GestionarArticulos {
         Map<String, Object> parametro = new HashMap<>();
         final QueryHelper q = new QueryHelper("INSERT INTO SVT_ARTICULO_MEDIDA");
         q.agregarParametroValues("ID_ARTICULO", "idTabla");
-        q.agregarParametroValues("NUM_LARGO", agm.getLargo());
-        q.agregarParametroValues("NUM_ANCHO", agm.getAncho());
-        q.agregarParametroValues("NUM_ALTO", agm.getAlto());
+        q.agregarParametroValues("NUM_LARGO", String.valueOf(agm.getLargo()));
+        q.agregarParametroValues("NUM_ANCHO", String.valueOf(agm.getAncho()));
+        q.agregarParametroValues("NUM_ALTO", String.valueOf(agm.getAlto()));
         String query = q.obtenerQueryInsertar();
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
@@ -68,9 +68,6 @@ public class GestionarArticulos {
     public DatosRequest actualizarArticulo(AgregarArticuloRequest request, UsuarioDto user) {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
-        log.info("pp->" + request.getIdPartidaPresupuestal());
-        log.info("cc->" + request.getIdCuentaContable());
-        log.info("sat->" + request.getIdClaveSAT());
         String query = "UPDATE SVT_ARTICULO " +
                 "set ID_CATEGORIA_ARTICULO = " + request.getIdCategoria() +","
                 +"ID_TIPO_ARTICULO = " + request.getIdTipoArticulo() +","+
@@ -86,7 +83,6 @@ public class GestionarArticulos {
                 "FEC_ACTUALIZACION = NOW()" +
                 "WHERE ID_ARTICULO = " + request.getIdArticulo()
                 ;
-        log.info(query);
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);
@@ -97,9 +93,9 @@ public class GestionarArticulos {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
         final QueryHelper q = new QueryHelper("UPDATE SVT_ARTICULO_MEDIDA");
-        q.agregarParametroValues("NUM_LARGO", agm.getLargo());
-        q.agregarParametroValues("NUM_ANCHO", agm.getAncho());
-        q.agregarParametroValues("NUM_ALTO", agm.getAlto());
+        q.agregarParametroValues("NUM_LARGO", agm.getLargo().toString());
+        q.agregarParametroValues("NUM_ANCHO", agm.getAncho().toString());
+        q.agregarParametroValues("NUM_ALTO", agm.getAlto().toString());
         q.addWhere("ID_ARTICULO =" + agm.getIdArticulo());
         String query = q.obtenerQueryActualizar();
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());

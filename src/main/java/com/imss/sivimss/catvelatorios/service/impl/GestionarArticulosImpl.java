@@ -38,9 +38,9 @@ public class GestionarArticulosImpl implements GestionarArticulosServices {
         UsuarioDto usuarioDto = json.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
         Response<?> response;
         if (!validarRepetido(articulosDto.getDescripcionArticulo(), authentication)) {
-            agm.setAlto(articulosDto.getMedidas().getAlto().toString());
-            agm.setAncho(articulosDto.getMedidas().getAncho().toString());
-            agm.setLargo(articulosDto.getMedidas().getLargo().toString());
+            agm.setAlto(articulosDto.getMedidas().getAlto());
+            agm.setAncho(articulosDto.getMedidas().getAncho());
+            agm.setLargo(articulosDto.getMedidas().getLargo());
             response = providerRestTemplate.consumirServicio(gestion.insertarArticulo(articulosDto, agm, usuarioDto).getDatos(), urlDominioConsulta + "/generico/crearMultiple", authentication);
         } else {
             throw new BadRequestException(HttpStatus.BAD_REQUEST, "Registro repetido");
@@ -56,9 +56,9 @@ public class GestionarArticulosImpl implements GestionarArticulosServices {
             Response<?> response = providerRestTemplate.consumirServicio(gestion.actualizarArticulo(articulosDto, usuarioDto).getDatos(), urlDominioConsulta + "/generico/actualizar", authentication);
             if (response.getCodigo() == 200) {
                 agm.setIdArticulo(String.valueOf(articulosDto.getIdArticulo()));
-                agm.setAlto(articulosDto.getMedidas().getAlto().toString());
-                agm.setAncho(articulosDto.getMedidas().getAncho().toString());
-                agm.setLargo(articulosDto.getMedidas().getLargo().toString());
+                agm.setAlto(articulosDto.getMedidas().getAlto());
+                agm.setAncho(articulosDto.getMedidas().getAncho());
+                agm.setLargo(articulosDto.getMedidas().getLargo());
                 providerRestTemplate.consumirServicio(gestion.actualizarArticuloMedida(agm).getDatos(),
                         urlDominioConsulta + "/generico/actualizar", authentication);
             } else {
