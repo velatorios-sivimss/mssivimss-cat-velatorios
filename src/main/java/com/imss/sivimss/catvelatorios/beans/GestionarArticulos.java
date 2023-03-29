@@ -68,22 +68,25 @@ public class GestionarArticulos {
     public DatosRequest actualizarArticulo(AgregarArticuloRequest request, UsuarioDto user) {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
-        final QueryHelper q = new QueryHelper("UPDATE SVT_ARTICULO");
-        q.agregarParametroValues("ID_CATEGORIA_ARTICULO", String.valueOf(request.getIdCategoria()));
-        q.agregarParametroValues("ID_TIPO_ARTICULO", String.valueOf(request.getIdTipoArticulo()));
-        q.agregarParametroValues("ID_TIPO_MATERIAL", String.valueOf(request.getIdTipoMaterial()));
-        q.agregarParametroValues("ID_TAMANIO", String.valueOf(request.getIdTamanio()));
-        q.agregarParametroValues("ID_CLASIFICACION_PRODUCTO", String.valueOf(request.getIdClasificacionProducto()));
-        q.agregarParametroValues("DES_MODELO_ARTICULO", "'" + request.getModeloArticulo() + "'");
-        q.agregarParametroValues("DES_ARTICULO", "'" + request.getDescripcionArticulo() + "'");
-        q.agregarParametroValues("ID_PART_PRESUPUESTAL", String.valueOf(request.getIdPartidaPresupuestal()));
-        q.agregarParametroValues("ID_CUENTA_PART_PRESU", String.valueOf(request.getIdCuentaContable()));
-        q.agregarParametroValues("ID_PRODUCTOS_SERVICIOS", String.valueOf(request.getIdClaveSAT()));
-        q.agregarParametroValues("CVE_ESTATUS", String.valueOf(1));
-        q.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(user.getIdUsuario()));
-        q.agregarParametroValues("FEC_ACTUALIZACION", "NOW()");
-        q.addWhere("ID_ARTICULO =" + request.getIdArticulo());
-        String query = q.obtenerQueryActualizar();
+        log.info("pp->" + request.getIdPartidaPresupuestal());
+        log.info("cc->" + request.getIdCuentaContable());
+        log.info("sat->" + request.getIdClaveSAT());
+        String query = "UPDATE SVT_ARTICULO " +
+                "set ID_CATEGORIA_ARTICULO = " + request.getIdCategoria() +","
+                +"ID_TIPO_ARTICULO = " + request.getIdTipoArticulo() +","+
+                "ID_TIPO_MATERIAL = " + request.getIdTipoMaterial() +","+
+                "ID_TAMANIO = " + request.getIdTamanio() +","+
+                "ID_CLASIFICACION_PRODUCTO = " + request.getIdClasificacionProducto() +","+
+                "DES_MODELO_ARTICULO = '" + request.getModeloArticulo() +"',"+
+                "DES_ARTICULO = '" + request.getDescripcionArticulo() +"',"+
+                "ID_PART_PRESUPUESTAL = " + request.getIdPartidaPresupuestal() +","+
+                "ID_CUENTA_PART_PRESU = " + request.getIdCuentaContable() +","+
+                "ID_PRODUCTOS_SERVICIOS = " + request.getIdClaveSAT() +","+
+                "ID_USUARIO_MODIFICA = " + user.getIdUsuario() +","+
+                "FEC_ACTUALIZACION = NOW()" +
+                "WHERE ID_ARTICULO = " + request.getIdArticulo()
+                ;
+        log.info(query);
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);

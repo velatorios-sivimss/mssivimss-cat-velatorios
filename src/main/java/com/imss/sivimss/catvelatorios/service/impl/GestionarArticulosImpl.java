@@ -52,7 +52,7 @@ public class GestionarArticulosImpl implements GestionarArticulosServices {
     public Response<?> modificarArticulo(DatosRequest request, Authentication authentication) throws IOException {
         AgregarArticuloRequest articulosDto = json.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), AgregarArticuloRequest.class);
         UsuarioDto usuarioDto = json.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-        if (!validarRepetido(articulosDto.getDescripcionArticulo(), authentication)) {
+        //if (!validarRepetido(articulosDto.getDescripcionArticulo(), authentication)) {
             Response<?> response = providerRestTemplate.consumirServicio(gestion.actualizarArticulo(articulosDto, usuarioDto).getDatos(), urlDominioConsulta + "/generico/actualizar", authentication);
             if (response.getCodigo() == 200) {
                 agm.setIdArticulo(String.valueOf(articulosDto.getIdArticulo()));
@@ -65,8 +65,8 @@ public class GestionarArticulosImpl implements GestionarArticulosServices {
                 throw new BadRequestException(HttpStatus.BAD_REQUEST, "Error al insertar medidas");
             }
             return response;
-        }
-        throw new BadRequestException(HttpStatus.BAD_REQUEST, "Registro repetido");
+        //}
+        //throw new BadRequestException(HttpStatus.BAD_REQUEST, "Registro repetido");
     }
 
     @Override
