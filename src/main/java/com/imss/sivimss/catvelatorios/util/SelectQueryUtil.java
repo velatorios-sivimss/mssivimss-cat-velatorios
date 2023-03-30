@@ -2,8 +2,13 @@ package com.imss.sivimss.catvelatorios.util;
 
 import java.util.*;
 
-// todo - se pretende renombrar la clase para que lleve una semantica, algo como un factory o algo asi
-public class QueryUtil {
+
+/**
+ * Utiler&iacute;a para crear consultas select.
+ *
+ * @author esa
+ */
+public class SelectQueryUtil {
     // constantes
     private static final String SELECT = "SELECT";
     private static final String SPACE = " ";
@@ -41,7 +46,7 @@ public class QueryUtil {
      *                 de la consulta.
      * @return Regresa la misma instancia para que se le puedan agregar m&aacute;s funciones.
      */
-    public QueryUtil select(String... columnas) {
+    public SelectQueryUtil select(String... columnas) {
         this.columnas = Arrays.asList(columnas);
         return this;
     }
@@ -58,7 +63,7 @@ public class QueryUtil {
      * @param tabla Es una cadena que representa la o las tablas a las que va a realizar la consulta
      * @return Regresa la misma instancia para que se puedan anidar las otras funciones
      */
-    public QueryUtil from(String... tabla) {
+    public SelectQueryUtil from(String... tabla) {
         this.tablas.addAll(Arrays.asList(tabla));
         return this;
     }
@@ -70,7 +75,7 @@ public class QueryUtil {
      * @param condiciones Lista de condiciones que se van a evaluar en el query
      * @return
      */
-    public QueryUtil where(String... condiciones) {
+    public SelectQueryUtil where(String... condiciones) {
         if (this.condiciones == null) {
             this.condiciones = new ArrayList<>();
         }
@@ -88,7 +93,7 @@ public class QueryUtil {
      * @return
      */
     @SuppressWarnings("UnusedReturnValue")
-    public QueryUtil setParameter(String nombre, Object valor) {
+    public SelectQueryUtil setParameter(String nombre, Object valor) {
         if (this.parametros == null) {
             this.parametros = new HashMap<>();
         }
@@ -104,7 +109,7 @@ public class QueryUtil {
      * @return
      */
     @SuppressWarnings("UnusedReturnValue")
-    public QueryUtil orderBy(String columna) {
+    public SelectQueryUtil orderBy(String columna) {
         this.orderBy.add(columna);
         return this;
     }
@@ -116,7 +121,7 @@ public class QueryUtil {
      * @param on
      * @return
      */
-    public QueryUtil leftJoin(String tabla, String on) {
+    public SelectQueryUtil leftJoin(String tabla, String on) {
         joins.add(new Join(LEFT_JOIN, tabla, on));
         return this;
     }
@@ -128,7 +133,7 @@ public class QueryUtil {
      * @param on
      * @return
      */
-    public QueryUtil join(String tabla, String on) {
+    public SelectQueryUtil join(String tabla, String on) {
         joins.add(new Join(JOIN, tabla, on));
         return this;
     }
@@ -136,7 +141,6 @@ public class QueryUtil {
     /**
      * Regresa el query que se construy&oacute;.
      * <p>
-     * todo - agregar validaciones de las partes que deben de estar obligatoriamente
      *
      * @return
      */
@@ -159,12 +163,22 @@ public class QueryUtil {
         return stringBuilder.toString();
     }
 
+    /**
+     * Agrega la senetencia order by en caso de que se exista.
+     *
+     * @param stringBuilder
+     */
     private void addOrderBy(StringBuilder stringBuilder) {
         if (!orderBy.isEmpty()) {
             stringBuilder.append(" order by ").append(String.join(", ", orderBy)).append(" ");
         }
     }
 
+    /**
+     * Agrega la lista de condiciones que se hayan agregado a la consulta.
+     *
+     * @param stringBuilder
+     */
     private void agregarCondiciones(StringBuilder stringBuilder) {
         if (!condiciones.isEmpty()) {
             stringBuilder.append(SPACE).append(WHERE).append(SPACE);
@@ -186,6 +200,11 @@ public class QueryUtil {
         }
     }
 
+    /**
+     * Agrega los joins si es que se han agregado a la consulta.
+     *
+     * @param stringBuilder
+     */
     private void agregarJoins(StringBuilder stringBuilder) {
         if (!joins.isEmpty()) {
             for (Join join : joins) {
@@ -200,6 +219,11 @@ public class QueryUtil {
         }
     }
 
+    /**
+     * Agrega la lista de columnas para construir la consulta.
+     *
+     * @param stringBuilder
+     */
     private void agregarColumnas(StringBuilder stringBuilder) {
         if (columnas.isEmpty()) {
             stringBuilder.append(ASTERISKS).append(SPACE);
