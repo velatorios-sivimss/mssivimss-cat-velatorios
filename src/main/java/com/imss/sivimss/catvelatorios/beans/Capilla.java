@@ -106,7 +106,7 @@ public class Capilla {
         SelectQueryUtil selectQueryUtil = new SelectQueryUtil();
 
         selectQueryUtil.select()
-                .select("ID_CAPILLA AS capillaId",
+                .select("ID_CAPILLA AS idCapilla",
                         "NOM_CAPILLA AS nombre",
                         "CAN_CAPACIDAD AS capacidad",
                         "NUM_LARGO AS largo",
@@ -122,7 +122,7 @@ public class Capilla {
                     .setParameter("idCapilla", filtros.getIdCapilla());
         }
         if (filtros.getNombreCapilla() != null) {
-            selectQueryUtil.where("nombre.NOM_CAPILLA = :nombreCapilla")
+            selectQueryUtil.where("capilla.NOM_CAPILLA = :nombreCapilla")
                     .setParameter("nombreCapilla", filtros.getNombreCapilla());
         }
         if (filtros.getIdVelatorio() != null) {

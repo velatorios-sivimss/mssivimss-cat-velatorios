@@ -187,7 +187,11 @@ public class SelectQueryUtil {
                 if (condicion.contains(COLON)) {
                     String nombreParametro = condicion.substring(condicion.indexOf(COLON) + 1);
                     Object value = parametros.get(nombreParametro);
-                    condicion = condicion.replace(COLON + nombreParametro, value.toString());
+                    if (value instanceof String) {
+                        condicion = condicion.replace(COLON + nombreParametro, "'" + value.toString() + "'");
+                    } else {
+                        condicion = condicion.replace(COLON + nombreParametro, value.toString());
+                    }
                 } else {
                     condicion = condicion.trim();
                 }
