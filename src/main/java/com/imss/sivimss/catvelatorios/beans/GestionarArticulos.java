@@ -69,7 +69,7 @@ public class GestionarArticulos {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
         String query = "UPDATE SVT_ARTICULO " +
-                "set ID_CATEGORIA_ARTICULO = " + request.getIdCategoria() +","
+                "SET ID_CATEGORIA_ARTICULO = " + request.getIdCategoria() +","
                 +"ID_TIPO_ARTICULO = " + request.getIdTipoArticulo() +","+
                 "ID_TIPO_MATERIAL = " + request.getIdTipoMaterial() +","+
                 "ID_TAMANIO = " + request.getIdTamanio() +","+
@@ -80,7 +80,7 @@ public class GestionarArticulos {
                 "ID_CUENTA_PART_PRESU = " + request.getIdCuentaContable() +","+
                 "ID_PRODUCTOS_SERVICIOS = " + request.getIdClaveSAT() +","+
                 "ID_USUARIO_MODIFICA = " + user.getIdUsuario() +","+
-                "FEC_ACTUALIZACION = NOW()" +
+                "FEC_ACTUALIZACION = NOW() " +
                 "WHERE ID_ARTICULO = " + request.getIdArticulo()
                 ;
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
@@ -92,12 +92,10 @@ public class GestionarArticulos {
     public DatosRequest actualizarArticuloMedida(AgregarMedidasRequest agm) {
         DatosRequest dr = new DatosRequest();
         Map<String, Object> parametro = new HashMap<>();
-        final QueryHelper q = new QueryHelper("UPDATE SVT_ARTICULO_MEDIDA");
-        q.agregarParametroValues("NUM_LARGO", agm.getLargo().toString());
-        q.agregarParametroValues("NUM_ANCHO", agm.getAncho().toString());
-        q.agregarParametroValues("NUM_ALTO", agm.getAlto().toString());
-        q.addWhere("ID_ARTICULO =" + agm.getIdArticulo());
-        String query = q.obtenerQueryActualizar();
+        String query = "UPDATE SVT_ARTICULO_MEDIDA SET NUM_LARGO = " + agm.getLargo() +
+                ", NUM_ANCHO = " + agm.getAncho() +
+                ", NUM_ALTO =" + agm.getAlto() +
+                " WHERE ID_ARTICULO = " + agm.getIdArticulo();
         String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
         parametro.put(AppConstantes.QUERY, encoded);
         dr.setDatos(parametro);
@@ -204,15 +202,15 @@ public class GestionarArticulos {
                 "SA.ID_PRODUCTOS_SERVICIOS AS idProductosServicios, " +
                 "CPS.DES_PRODUCTOS_SERVICIOS AS productoServicios " +
                 "FROM SVT_ARTICULO SA  " +
-                "INNER JOIN SVC_CATEGORIA_ARTICULO CA ON SA.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO  " +
-                "INNER JOIN SVC_TIPO_ARTICULO TA ON SA.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO " +
-                "INNER JOIN SVC_TIPO_MATERIAL TM ON SA.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL " +
-                "INNER JOIN SVC_TAMANIO T ON SA.ID_TAMANIO = T.ID_TAMANIO  " +
-                "INNER JOIN SVC_CLASIFICACION_PRODUCTO CP ON SA.ID_CLASIFICACION_PRODUCTO = CP.ID_CLASIFICACION_PRODUCTO " +
-                "INNER JOIN SVT_ARTICULO_MEDIDA SAM ON SA.ID_ARTICULO = SAM.ID_ARTICULO " +
-                "INNER JOIN SVC_PARTIDA_PRESUPUESTAL PP ON SA.ID_PART_PRESUPUESTAL = PP.ID_PART_PRESUPUESTAL  " +
-                "INNER JOIN SVC_CUENTA_PART_PRESU CC ON SA.ID_CUENTA_PART_PRESU = CC.ID_CUENTA_PART_PRESU " +
-                "INNER JOIN SVC_CLAVES_PRODUCTOS_SERVICIOS CPS ON SA.ID_PRODUCTOS_SERVICIOS = CPS.ID_PRODUCTOS_SERVICIOS ";
+                "LEFT JOIN SVC_CATEGORIA_ARTICULO CA ON SA.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO  " +
+                "LEFT JOIN SVC_TIPO_ARTICULO TA ON SA.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO " +
+                "LEFT JOIN SVC_TIPO_MATERIAL TM ON SA.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL " +
+                "LEFT JOIN SVC_TAMANIO T ON SA.ID_TAMANIO = T.ID_TAMANIO  " +
+                "LEFT JOIN SVC_CLASIFICACION_PRODUCTO CP ON SA.ID_CLASIFICACION_PRODUCTO = CP.ID_CLASIFICACION_PRODUCTO " +
+                "LEFT JOIN SVT_ARTICULO_MEDIDA SAM ON SA.ID_ARTICULO = SAM.ID_ARTICULO " +
+                "LEFT JOIN SVC_PARTIDA_PRESUPUESTAL PP ON SA.ID_PART_PRESUPUESTAL = PP.ID_PART_PRESUPUESTAL  " +
+                "LEFT JOIN SVC_CUENTA_PART_PRESU CC ON SA.ID_CUENTA_PART_PRESU = CC.ID_CUENTA_PART_PRESU " +
+                "LEFT JOIN SVC_CLAVES_PRODUCTOS_SERVICIOS CPS ON SA.ID_PRODUCTOS_SERVICIOS = CPS.ID_PRODUCTOS_SERVICIOS ";
         constr.append(query);
         if (br.getNombreArticulo() != null) {
             constr.append("WHERE SA.DES_ARTICULO LIKE '%" + br.getNombreArticulo() + "%'");
