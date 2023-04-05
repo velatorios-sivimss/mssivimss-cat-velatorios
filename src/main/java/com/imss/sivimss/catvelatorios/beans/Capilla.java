@@ -7,7 +7,7 @@ import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
 import com.imss.sivimss.catvelatorios.util.QueryHelper;
-import com.imss.sivimss.catvelatorios.util.QueryUtil;
+import com.imss.sivimss.catvelatorios.util.SelectQueryUtil;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.HashMap;
@@ -39,7 +39,6 @@ public class Capilla {
         queryHelper.agregarParametroValues("FEC_BAJA", "null");
 
         String query = queryHelper.obtenerQueryInsertar();
-        System.out.println(query);
         parametrosRequest.put(
                 AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes())
@@ -65,7 +64,6 @@ public class Capilla {
         queryHelper.agregarParametroValues("ID_VELATORIO", String.valueOf(capillaDto.getIdVelatorio()));
         queryHelper.agregarParametroValues("ID_USUARIO_MODIFICA", String.valueOf(usuario.getIdUsuario()));
         queryHelper.agregarParametroValues("FEC_ACTUALIZACION", "CURRENT_TIMESTAMP");
-        // todo - se puede detallar mas el where para que reciba mas parametros que nos diga el tipo de comparacion etc.
         queryHelper.addWhere("ID_CAPILLA = " + capillaDto.getIdCapilla());
 
         String query = queryHelper.obtenerQueryActualizar();
@@ -105,10 +103,10 @@ public class Capilla {
         Gson gson = new Gson();
         FiltrosCapillas filtros = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), FiltrosCapillas.class);
 
-        QueryUtil queryUtil = new QueryUtil();
+        SelectQueryUtil selectQueryUtil = new SelectQueryUtil();
 
-        queryUtil.select()
-                .select("ID_CAPILLA AS capillaId",
+        selectQueryUtil
+                .select("ID_CAPILLA AS idCapilla",
                         "NOM_CAPILLA AS nombre",
                         "CAN_CAPACIDAD AS capacidad",
                         "NUM_LARGO AS largo",
@@ -120,22 +118,22 @@ public class Capilla {
                 .join("SVC_VELATORIO velatorio", "capilla.ID_VELATORIO = velatorio.ID_VELATORIO");
 
         if (filtros.getIdCapilla() != null) {
-            queryUtil.where("capilla.ID_CAPILLA = :idCapilla")
+            selectQueryUtil.where("capilla.ID_CAPILLA = :idCapilla")
                     .setParameter("idCapilla", filtros.getIdCapilla());
         }
         if (filtros.getNombreCapilla() != null) {
-            queryUtil.where("nombre.NOM_CAPILLA = :nombreCapilla")
+            selectQueryUtil.where("capilla.NOM_CAPILLA = :nombreCapilla")
                     .setParameter("nombreCapilla", filtros.getNombreCapilla());
         }
         if (filtros.getIdVelatorio() != null) {
-            queryUtil.where("capilla.ID_VELATORIO = :idVelatorio")
+            selectQueryUtil.where("capilla.ID_VELATORIO = :idVelatorio")
                     .setParameter("idVelatorio", filtros.getIdVelatorio());
         }
 
-        queryUtil.orderBy("ID_CAPILLA");
+        selectQueryUtil.orderBy("ID_CAPILLA");
 
         Map<String, Object> parametros = new HashMap<>();
-        String query = queryUtil.build();
+        String query = selectQueryUtil.build();
         parametros.put(
                 AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes())
@@ -153,8 +151,8 @@ public class Capilla {
      */
     public DatosRequest buscarCapilla(Long idCapilla) {
         DatosRequest datos = new DatosRequest();
-        QueryUtil queryUtil = new QueryUtil();
-        queryUtil.select("ID_CAPILLA AS idCapilla",
+        SelectQueryUtil selectQueryUtil = new SelectQueryUtil();
+        selectQueryUtil.select("ID_CAPILLA AS idCapilla",
                         "NOM_CAPILLA AS nombre",
                         "CAN_CAPACIDAD AS capacidad",
                         "NUM_LARGO AS largo",
@@ -169,7 +167,7 @@ public class Capilla {
                 .orderBy("ID_CAPILLA");
 
         Map<String, Object> parametros = new HashMap<>();
-        String query = queryUtil.build();
+        String query = selectQueryUtil.build();
 
         parametros.put(AppConstantes.QUERY,
                 DatatypeConverter.printBase64Binary(query.getBytes()));
