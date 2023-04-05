@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class FiltrosCapillas {
     private Long idVelatorio;
-    private String idCapilla;
+    private Long idCapilla;
     private String nombreCapilla;
 }
