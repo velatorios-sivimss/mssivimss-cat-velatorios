@@ -33,7 +33,7 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Response<?> sendPostRequestByteArray(String url, DatosRequest body, Class<?> clazz)
+    public Response<?> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
             throws IOException {
         log.info("Prepara la informacion antes de enviar la pericion");
         return sendPostRequest(url,body, clazz, null);
@@ -46,7 +46,7 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Response<?> sendPostRequestByteArrayToken(String url, DatosRequest body, String subject,
+    public Response<?> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
                                                      Class<?> clazz) throws IOException {
         return sendPostRequest(url,body, clazz, subject);
     }
@@ -97,39 +97,39 @@ public class RestTemplateUtil {
         Response<?> responseBody = new Response<>();
         HttpHeaders headers = RestTemplateUtil.createHttpHeadersArchivosToken(subject);
 
-        ResponseEntity<?> responseEntity = null;
-        try {
+		ResponseEntity<?> responseEntity = null;
+		try {
 
-            LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
+			LinkedMultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
-            for (MultipartFile file : body.getArchivos()) {
-                if (!file.isEmpty()) {
-                    parts.add("files",
-                            new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()));
-                }
-            }
+			for (MultipartFile file : body.getArchivos()) {
+				if (!file.isEmpty()) {
+					parts.add("files",
+							new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()));
+				}
+			}
 
-            parts.add("datos", body.getDatos());
-            HttpEntity<LinkedMultiValueMap<String, Object>> request = new HttpEntity<>(parts, headers);
+			parts.add("datos", body.getDatos());
+			HttpEntity<LinkedMultiValueMap<String, Object>> request = new HttpEntity<>(parts, headers);
 
-            responseEntity = restTemplate.postForEntity(url, request, clazz);
-            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                // noinspection unchecked
-                responseBody = (Response<List<String>>) responseEntity.getBody();
-            } else {
-                throw new IOException(ERROR);
-            }
-        } catch (IOException ioException) {
-            throw ioException;
-        } catch (Exception e) {
-            log.error(FALLO, e.getMessage());
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
-        }
+			responseEntity = restTemplate.postForEntity(url, request, clazz);
+			if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+				// noinspection unchecked
+				responseBody = (Response<List<String>>) responseEntity.getBody();
+			} else {
+				throw new IOException("Ha ocurrido un error al enviar");
+			}
+		} catch (IOException ioException) {
+			throw ioException;
+		} catch (Exception e) {
+			log.error("Fallo al consumir el servicio, {}", e.getMessage());
+			responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			responseBody.setError(true);
+			responseBody.setMensaje(e.getMessage());
+		}
 
-        return responseBody;
-    }
+		return responseBody;
+	}
 
     private static HttpHeaders createHttpHeadersArchivosToken(String subject) {
 
@@ -150,32 +150,19 @@ public class RestTemplateUtil {
      */
     public Response<?> sendPostRequestByteArrayReportesToken(String url, DatosReporteDTO body, String subject,
                                                              Class<?> clazz) throws IOException {
-        Response<?> responseBody = new Response<>();
-        HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
+		Response<?> responseBody = new Response<>();
+		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
-        HttpEntity<Object> request = new HttpEntity<>(body, headers);
-        ResponseEntity<?> responseEntity = null;
-        try {
-            responseEntity = restTemplate.postForEntity(url, request, clazz);
-            if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-                responseBody = (Response<List<String>>) responseEntity.getBody();
-            } else {
-                throw new IOException(ERROR);
-            }
-        } catch (IOException ioException) {
-            throw ioException;
-        } catch (Exception e) {
-            log.error(FALLO, e.getMessage());
-            responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            responseBody.setError(true);
-            responseBody.setMensaje(e.getMessage());
-        }
+		HttpEntity<Object> request = new HttpEntity<>(body, headers);
+		ResponseEntity<?> responseEntity = null;
+		responseEntity = restTemplate.postForEntity(url, request, clazz);
+		responseBody = (Response<List<String>>) responseEntity.getBody();
 
         return responseBody;
     }
 
 
-    private Response<?> sendPostRequest(String url, DatosRequest body, Class<?> clazz, String subject) throws IOException{
+    private Response<?> sendPostRequest(String url, EnviarDatosRequest body, Class<?> clazz, String subject) throws IOException{
         HttpHeaders headers = null;
         if(subject!=null && subject.trim().length()>0){
             headers = RestTemplateUtil.createHttpHeadersToken(subject);
@@ -185,7 +172,7 @@ public class RestTemplateUtil {
         return sendPostRequestSecond(url,body,clazz,headers);
     }
 
-    private Response<?> sendPostRequestSecond(String url, DatosRequest body, Class<?> clazz, HttpHeaders headers) throws IOException{
+    private Response<?> sendPostRequestSecond(String url, EnviarDatosRequest body, Class<?> clazz, HttpHeaders headers) throws IOException{
         Response<Object> responseBody = new Response<>();
         HttpEntity<Object> request = new HttpEntity<>(body, headers);
         ResponseEntity<String> responseEntity = null;

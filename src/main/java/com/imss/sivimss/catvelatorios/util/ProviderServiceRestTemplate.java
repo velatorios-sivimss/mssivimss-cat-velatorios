@@ -27,7 +27,7 @@ public class ProviderServiceRestTemplate {
 	
 	public Response<?> consumirServicio(Map<String, Object> dato, String url,Authentication authentication) throws IOException {
 		try {
-			Response respuestaGenerado=restTemplateUtil.sendPostRequestByteArrayToken(url, new DatosRequest(dato),jwtTokenProvider.createTokenTest(authentication.getPrincipal().toString()), Response.class);
+			Response respuestaGenerado=restTemplateUtil.sendPostRequestByteArrayToken(url, new EnviarDatosRequest(dato),jwtTokenProvider.createTokenTest(authentication.getPrincipal().toString()), Response.class);
 			return validarResponse(respuestaGenerado);
 		} catch (IOException exception) {
 			log.error("Ha ocurrido un error al recuperar la informacion");
