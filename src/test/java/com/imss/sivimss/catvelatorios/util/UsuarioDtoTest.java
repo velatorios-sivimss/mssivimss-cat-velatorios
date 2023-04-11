@@ -13,9 +13,9 @@ public class UsuarioDtoTest {
     @Test
     public void usuarioDtoTest() throws Exception {
         UsuarioDto request=new UsuarioDto();
-        assertNull(request.getId());
-        assertNull(request.getRol());
+        assertNull(request.getIdUsuario());
+        assertNull(request.getDesRol());
         assertNull(request.getNombre());
-        assertNull(request.getCorreo());
+        assertNull(request.getNombre());
     }
 }

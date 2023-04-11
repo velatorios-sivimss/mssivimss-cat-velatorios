@@ -6,12 +6,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
 import com.imss.sivimss.catvelatorios.util.NoRedirectSimpleClientHttpRequestFactory;
 
-@EnableWebMvc
 @SpringBootApplication
 public class CatVelatoriosApplication {
 

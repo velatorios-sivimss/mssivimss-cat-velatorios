@@ -8,7 +8,11 @@ package com.imss.sivimss.catvelatorios.util;
  * @date 24 nov. 2022
  */
 public class AppConstantes {
-
+	public static final String CIRCUITBREAKER = "El servicio no responde, no permite más llamadas.";
+	public static final String NUMERO_DE_PAGINA = "0";
+	public static final String TAMANIO_PAGINA = "10";
+	public static final String ORDER_BY= "id";
+	public static final String ORDER_DIRECTION= "asc";
 	public static final String SUPERVISOR = "Supervisor";
 	
 	public static final String DATOS= "datos";
@@ -27,6 +31,10 @@ public class AppConstantes {
 	public static final String ILLEGALARGUMENTEXCEPTION_MENSAJE  = "Token vacío.";
 	public static final String SIGNATUREEXCEPTION_MENSAJE  = "Fallo la firma.";
 	public static final String FORBIDDENEXCEPTION_MENSAJE  = "No tiene autorización para realizar la solicitud.";
+	
+	public static final String INDESTATUS  = "IND_ESTATUS";
+	public static final String CURRENT_TIMESTAMP  = "CURRENT_TIMESTAMP()";
+	public static final String PALABRA  = "palabra";
 
 	private AppConstantes() {
 	    throw new IllegalStateException("AppConstantes class");

@@ -26,7 +26,7 @@ public class Panteones {
         DatosRequest dr = this.panteonComun(request, q);
         Map<String, Object> parametro = new HashMap<>();
 
-        q.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(user.getId()));
+        q.agregarParametroValues("ID_USUARIO_ALTA", String.valueOf(user.getIdUsuario()));
         q.agregarParametroValues("FEC_ALTA", PanteonesConstants.FECHAACTUAL);
         q.agregarParametroValues("FEC_ACTUALIZACION", null);
         q.agregarParametroValues(PanteonesConstants.FECBAJA, null);
