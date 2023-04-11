@@ -116,7 +116,7 @@ public class ProviderServiceRestTemplate {
 		} catch (Exception e2) {
 			return new Response<>(true, HttpStatus.REQUEST_TIMEOUT.value(), AppConstantes.CIRCUITBREAKER, Collections.emptyList());
 		}
-		return response;
+		return MensajeResponseUtil.mensajeResponse(response, "");
 	}
 
 }
