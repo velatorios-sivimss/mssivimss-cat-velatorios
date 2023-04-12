@@ -14,44 +14,39 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.imss.sivimss.catvelatorios.security.jwt.AuthTokenFilter;
 
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-	@Bean
-	public AuthTokenFilter jwtAuthorizationFilter() {
-		return new AuthTokenFilter();
-	}
+    @Bean
+    public AuthTokenFilter jwtAuthorizationFilter() {
+        return new AuthTokenFilter();
+    }
 
-	/**
-	 * 
-	 * @param httpSecurity
-	 * @return las urls permitidas
-	 * @throws Exception
-	 */
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		// paths publicos
+    /**
+     * @param http
+     * @return las urls permitidas
+     * @throws Exception
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests().anyRequest().authenticated().and().exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint());
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class).sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http.csrf().disable().authorizeRequests().anyRequest().authenticated().and().exceptionHandling()
-				.authenticationEntryPoint(authenticationEntryPoint());
-		// ==añadir filtro a la configuracion de spring security
-		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class).sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        return http.build();
+    }
 
-		return http.build();
-	}
-
-	@Bean
-	public AuthenticationEntryPoint authenticationEntryPoint() {
-		return new CustomAuthenticationEntryPoint();
-	}
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
 
 }

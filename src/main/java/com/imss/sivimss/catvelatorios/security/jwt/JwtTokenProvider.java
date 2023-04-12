@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 @Component
 public class JwtTokenProvider {
 
-	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+	private static final Logger logger = LogManager.getLogger(JwtTokenProvider.class);
 
 	@Value("${jwt.secretkey-flujo}")
 	private String jwtSecret;
@@ -34,10 +34,17 @@ public class JwtTokenProvider {
 	@Value("${jwt.expiration-milliseconds}")
 	private String expiration;
 
+	public String createTokenTest(String subject) {
+		Map<String, Object> claims = Jwts.claims().setSubject(subject);
+		Date now = new Date();
+		Date exp = new Date(now.getTime() + Long.parseLong(expiration) * 1000);
+		return Jwts.builder().setHeaderParam("sistema", "sivimss").setClaims(claims)
+				.signWith(SignatureAlgorithm.HS512, jwtSecretDominios).compact();
+	}
+
 	public String createToken(String subject) {
 		Map<String, Object> claims = Jwts.claims().setSubject(subject);
 		Date now = new Date();
-		// Date exp = new Date(now.getTime() + 3600 * 1000);
 		Date exp = new Date(now.getTime() + Long.parseLong(expiration) * 1000);
 		return Jwts.builder().setHeaderParam("sistema", "sivimss").setClaims(claims).setIssuedAt(now).setExpiration(exp)
 				.signWith(SignatureAlgorithm.HS512, jwtSecretDominios).compact();
@@ -57,7 +64,6 @@ public class JwtTokenProvider {
 
 	public boolean validateToken(String authToken, HttpServletRequest request) {
 		try {
-			// Jwt token has not been tampered with
 			Jws<Claims> claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
 			return true;
 		} catch (MalformedJwtException e) {

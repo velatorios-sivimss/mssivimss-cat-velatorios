@@ -1,7 +1,5 @@
 package com.imss.sivimss.catvelatorios.exception;
 
-import java.util.Arrays;
-
 import org.springframework.http.HttpStatus;
 
 /**
@@ -15,18 +13,15 @@ public class BadRequestException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	private HttpStatus codigo;
+	private final HttpStatus codigo;
 	
-	private String mensaje;
+	private final String mensaje;
 
-	private String datos;
-
-	private boolean error;
+	private final boolean error;
 
 	public BadRequestException(HttpStatus codigo, String mensaje) {
 		super(mensaje);
 		this.codigo = codigo;
-		this.datos="";
 		this.mensaje = mensaje;
 		this.error=true;
 	}
@@ -35,15 +30,9 @@ public class BadRequestException extends RuntimeException {
 		return codigo;
 	}
 
-	public void setEstado(HttpStatus estado) {
-		this.codigo = estado;
-	}
 
 	public String getMensaje() {
 		return mensaje;
 	}
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
-	}
 }

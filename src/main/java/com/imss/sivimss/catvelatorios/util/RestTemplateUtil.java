@@ -1,27 +1,28 @@
 package com.imss.sivimss.catvelatorios.util;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Component
-@Slf4j
 public class RestTemplateUtil {
+	private static Logger log = LogManager.getLogger(RestTemplateUtil.class);
+	private static final String ERROR="Ha ocurrido un error al enviar";
+	private static final String FALLO="Fallo al consumir el servicio, {}";
 
 	private final RestTemplate restTemplate;
+
 
 	public RestTemplateUtil(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
@@ -36,29 +37,8 @@ public class RestTemplateUtil {
 	 */
 	public Response<?> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
 			throws IOException {
-		Response<?> responseBody = new Response<>();
-		HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
-
-		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
-		try {
-			responseEntity = restTemplate.postForEntity(url, request, clazz);
-			if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-				// noinspection unchecked
-				responseBody = (Response<List<String>>) responseEntity.getBody();
-			} else {
-				throw new IOException("Ha ocurrido un error al enviar");
-			}
-		} catch (IOException ioException) {
-			throw ioException;
-		} catch (Exception e) {
-			log.error("Fallo al consumir el servicio, {}", e.getMessage());
-			responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			responseBody.setError(true);
-			responseBody.setMensaje(e.getMessage());
-		}
-
-		return responseBody;
+		log.info("Prepara la informacion antes de enviar la pericion");
+		return sendPostRequest(url,body, clazz, null);
 	}
 
 	/**
@@ -70,17 +50,7 @@ public class RestTemplateUtil {
 	 */
 	public Response<?> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
 													 Class<?> clazz) throws IOException {
-		Response<?> responseBody = new Response<>();
-		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
-
-		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
-
-		responseEntity = restTemplate.postForEntity(url, request, clazz);
-
-		responseBody = (Response<List<String>>) responseEntity.getBody();
-
-		return responseBody;
+		return sendPostRequest(url,body, clazz, subject);
 	}
 
 	/**
@@ -191,6 +161,48 @@ public class RestTemplateUtil {
 		responseEntity = restTemplate.postForEntity(url, request, clazz);
 		responseBody = (Response<List<String>>) responseEntity.getBody();
 
+		return responseBody;
+	}
+
+	private Response<?> sendPostRequest(String url, EnviarDatosRequest body, Class<?> clazz, String subject) throws IOException{
+		HttpHeaders headers = null;
+		if(subject!=null && subject.trim().length()>0){
+			headers = RestTemplateUtil.createHttpHeadersToken(subject);
+		} else {
+			headers = RestTemplateUtil.createHttpHeaders();
+		}
+		return sendPostRequestSecond(url,body,clazz,headers);
+	}
+
+	private Response<?> sendPostRequestSecond(String url, EnviarDatosRequest body, Class<?> clazz, HttpHeaders headers) throws IOException{
+		Response<Object> responseBody = new Response<>();
+		HttpEntity<Object> request = new HttpEntity<>(body, headers);
+		ResponseEntity<String> responseEntity = null;
+		try {
+			responseEntity = restTemplate.postForEntity(url, request, String.class);
+			if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
+				JSONObject obj=new JSONObject(responseEntity.getBody());
+				responseBody.setCodigo(obj.getInt("codigo"));
+				responseBody.setMensaje(obj.getString("mensaje"));
+				responseBody.setError(obj.getBoolean("error"));
+				if(!obj.isNull("datos")){
+					ArrayList<Object> listdata = new ArrayList<>();
+					for (int i=0;i<obj.getJSONArray("datos").length();i++){
+						listdata.add(obj.getJSONArray("datos").getString(i));
+					}
+					responseBody.setDatos(listdata);
+				}
+			} else {
+				throw new IOException(ERROR);
+			}
+		} catch (IOException ioException) {
+			throw ioException;
+		} catch (Exception e) {
+			log.error(FALLO, e.getMessage());
+			responseBody.setCodigo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			responseBody.setError(true);
+			responseBody.setMensaje(e.getMessage());
+		}
 		return responseBody;
 	}
 }

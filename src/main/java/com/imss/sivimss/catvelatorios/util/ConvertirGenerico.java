@@ -1,6 +1,7 @@
 package com.imss.sivimss.catvelatorios.util;
 
 public class ConvertirGenerico {
+	private ConvertirGenerico(){}
 
 	public static <T> T convertInstanceOfObject(Object o) {
 	    try {
