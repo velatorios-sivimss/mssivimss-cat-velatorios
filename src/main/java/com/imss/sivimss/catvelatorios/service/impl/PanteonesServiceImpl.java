@@ -24,7 +24,7 @@ import java.io.IOException;
 public class PanteonesServiceImpl implements PanteonesService {
     private static Logger log = LogManager.getLogger(PanteonesServiceImpl.class);
 
-    @Value("${endpoints.dominio-consulta}")
+    @Value("${endpoints.mod-catalogos}")
     private String urlDominioConsulta;
 
     @Autowired

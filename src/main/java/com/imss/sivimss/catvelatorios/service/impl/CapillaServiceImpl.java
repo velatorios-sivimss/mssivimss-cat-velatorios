@@ -23,7 +23,7 @@ import java.util.Map;
 @Service
 @Slf4j
 public class CapillaServiceImpl implements CapillaService {
-    @Value("${endpoints.dominio-consulta}")
+    @Value("${endpoints.mod-catalogos}")
     private String urlDominioConsulta;
 
     @Value("${endpoints.ms-reportes}")

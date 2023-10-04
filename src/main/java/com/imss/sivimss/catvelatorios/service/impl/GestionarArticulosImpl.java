@@ -23,7 +23,7 @@ import java.io.IOException;
 @Slf4j
 @Service
 public class GestionarArticulosImpl implements GestionarArticulosServices {
-    @Value("${endpoints.dominio-consulta}")
+    @Value("${endpoints.mod-catalogos}")
     private String urlDominioConsulta;
 
     @Autowired

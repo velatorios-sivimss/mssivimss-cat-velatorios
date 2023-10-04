@@ -20,7 +20,7 @@ import java.io.IOException;
 @Service
 @Slf4j
 public class GestionarSalasImpl implements GestionarSalasServices {
-    @Value("${endpoints.dominio-consulta}")
+    @Value("${endpoints.mod-catalogos}")
     private String urlDominioConsulta;
     @Autowired
     private ProviderServiceRestTemplate providerRestTemplate;

@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class GestionarVelatorioServiceImpl implements GestionarVelatorioService {
 	
-	@Value("${endpoints.dominio-consulta}")
+	@Value("${endpoints.mod-catalogos}")
 	private String urlDominioConsulta;
 
 	@Autowired
