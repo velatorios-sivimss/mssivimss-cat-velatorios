@@ -30,8 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class GestionarVelatorioServiceImpl implements GestionarVelatorioService {
 	
-	@Value("${endpoints.mod-catalogos}")
-	private String urlDominioConsulta;
+	@Value("${endpoints.rutas.dominio-consulta}")
+	private String urlConsulta;
 
 	@Value("${endpoints.rutas.dominio-consulta-paginado}")
 	private String urlPaginado; 
@@ -71,7 +71,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> buscarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		return providerRestTemplate.consumirServicio(velatorio.buscarVelatorio(request).getDatos(), urlDominioConsulta + "/generico/paginado",
+		return providerRestTemplate.consumirServicio(velatorio.verDetalle(request).getDatos(), urlConsulta,
 				authentication);
 	}
 
@@ -79,7 +79,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
-		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlDominioConsulta + "/generico/paginado",
+		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
 				authentication);
 	}
 
@@ -92,7 +92,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 			if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
 				velatorio= new GestionarVelatorios(velatorioRequest);
 				velatorio.setIdUsuarioAlta(usuarioDto.getIdUsuario());
-				return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlDominioConsulta + "/generico/crear",
+				return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlConsulta + "/generico/crear",
 						authentication);
 			}
 				throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
@@ -111,7 +111,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIdUsuarioModifica(usuarioDto.getIdUsuario().toString());
 		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
-		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlDominioConsulta + "/generico/actualizar",
+		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlConsulta + "/generico/actualizar",
 				authentication);
 		}
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());		
@@ -128,12 +128,12 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		velatorio.setIndEstatus(velatorioRequest.getIndEstatus());
 		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
-		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus().getDatos(), urlDominioConsulta + "/generico/actualizar",
+		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus().getDatos(), urlConsulta + "/generico/actualizar",
 				authentication);
 	}
 	
 	private boolean validarRegistro(String nomVelatorio, Authentication authentication) throws IOException{
-			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
+			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlConsulta + "/generico/consulta",
 					authentication);
 			if (response.getCodigo()==200){
 				Object rst=response.getDatos();
@@ -143,7 +143,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 			}
 		
 	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
-		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlDominioConsulta + "/generico/consulta",
+		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlConsulta + "/generico/consulta",
 				authentication);
 		if (response.getCodigo()==200){
 	Object rst=response.getDatos();
@@ -154,7 +154,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> obtenerCp(DatosRequest request, Authentication authentication) throws IOException {
-		return providerRestTemplate.consumirServicio(velatorio.obtenerCp(request).getDatos(), urlDominioConsulta + "/generico/consulta",
+		return providerRestTemplate.consumirServicio(velatorio.obtenerCp(request).getDatos(), urlConsulta + "/generico/consulta",
 				authentication);	
 	}
 	

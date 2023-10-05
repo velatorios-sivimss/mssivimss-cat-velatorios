@@ -50,7 +50,7 @@ public class GestionarVelatoriosController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	@PostMapping("/buscar")
+	@PostMapping("/detalle")
 	public CompletableFuture<?> buscar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
 		Response<?> response = velatorioService.buscarVelatorio(request,authentication);
