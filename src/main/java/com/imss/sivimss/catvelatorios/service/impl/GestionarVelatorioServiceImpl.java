@@ -3,6 +3,7 @@ package com.imss.sivimss.catvelatorios.service.impl;
 import java.io.IOException;
 import java.util.logging.Level;
 
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ import com.imss.sivimss.catvelatorios.util.Response;
 
 import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Service
 public class GestionarVelatorioServiceImpl implements GestionarVelatorioService {
 	
@@ -51,7 +52,8 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	private static final String CONSULTA = "consulta";
 	private static final String INFORMACION_INCOMPLETA = "Informacion incompleta";
 	private static final String SIN_INFORMACION = "45";
-	private static final String EXITO = "EXITO";
+	private static final String YA_EXISTE = "12";
+	private static final String AGREGADO_CORRECTAMENTE = "30";
 	
 	Gson gson = new Gson();
 	
@@ -82,14 +84,30 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	
 	@Override
 	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
+		Response<?> response = new Response<>();
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
-		 
-			//if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
-				velatorio= new GestionarVelatorios(velatorioRequest);
+		velatorio= new GestionarVelatorios(velatorioRequest);
+		try {
+			 if(validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
+				 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"YA EXISTE EL VELATORIO", ALTA);
+			    	 response.setError(true);
+					response.setCodigo(200);
+					response.setMensaje(YA_EXISTE);
+					return response;
+				}
 				velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-				return providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
-						authentication);
+				response = MensajeResponseUtil.mensajeResponse( providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
+						authentication), AGREGADO_CORRECTAMENTE);
+				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Velatorio agregado correctamente", ALTA);
+		 }catch(Exception e) {
+			 String consulta = velatorio.insertarDomicilio().getDatos().get("query").toString();
+				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+				log.error("Error al ejecutar la query" +encoded);
+				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ERROR AL EJECUTAR LA QUERY", ALTA);
+				throw new IOException("5", e.getCause()) ;
+		 }
+				return response;
 	}
 
 	@Override
@@ -133,14 +151,11 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	}
 	
 	private boolean validarRegistro(String nomVelatorio, Authentication authentication) throws IOException{
-			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlConsulta + "/generico/consulta",
+			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlConsulta,
 					authentication);
-			if (response.getCodigo()==200){
 				Object rst=response.getDatos();
 				return !rst.toString().equals("[]");	
 				}
-			 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
-			}
 		
 	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlConsulta + "/generico/consulta",

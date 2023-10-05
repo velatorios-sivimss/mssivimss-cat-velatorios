@@ -295,8 +295,8 @@ public class GestionarVelatorios {
 		public DatosRequest buscarRepetido(String nomVelatorio) {
 			DatosRequest request= new DatosRequest();
 			Map<String, Object> parametro = new HashMap<>();
-				String query = "SELECT *  FROM SVC_VELATORIO WHERE NOM_VELATORIO=  '"+nomVelatorio +"' ";
-				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
+				String query = "SELECT *  FROM SVC_VELATORIO WHERE DES_VELATORIO=  '"+nomVelatorio +"' ";
+				String encoded=encodedQuery(query);
 				parametro.put(AppConstantes.QUERY, encoded);
 				request.setDatos(parametro);
 				return request;
