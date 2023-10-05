@@ -32,8 +32,8 @@ public class ProviderServiceRestTemplate {
 	public Response<?> consumirServicio(Map<String, Object> dato, String url, Authentication authentication)
 			throws IOException {
 		try {
-			Response respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayToken(url,
-					new EnviarDatosRequest(dato), jwtTokenProvider.createTokenTest((String) authentication.getPrincipal()),
+			Response<?> respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayToken(url,
+					new EnviarDatosRequest(dato), jwtTokenProvider.createToken((String) authentication.getPrincipal()),
 					Response.class);
 			return validarResponse(respuestaGenerado);
 		} catch (IOException exception) {
@@ -45,7 +45,7 @@ public class ProviderServiceRestTemplate {
 	public Response<?> consumirServicioReportes(Map<String, Object> dato, String nombreReporte, String tipoReporte,
 												String url, Authentication authentication) throws IOException {
 		try {
-			Response respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayReportesToken(url,
+			Response<?> respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayReportesToken(url,
 					new DatosReporteDTO(dato, nombreReporte, tipoReporte),
 					jwtTokenProvider.createToken((String) authentication.getPrincipal()), Response.class);
 			return validarResponse(respuestaGenerado);
@@ -55,9 +55,9 @@ public class ProviderServiceRestTemplate {
 		}
 	}
 
-	public Response<?> validarResponse(Response respuestaGenerado) {
+	public Response<?> validarResponse(Response<?> respuestaGenerado) {
 		String codigo = respuestaGenerado.getMensaje().substring(0, 3);
-		if ((respuestaGenerado.getCodigo() >=500 && respuestaGenerado.getCodigo()<=509) || codigo.equals("404") || codigo.equals("400") || codigo.equals("403")) {
+		if (codigo.equals("500") || codigo.equals("404") || codigo.equals("400") || codigo.equals("403")) {
 			Gson gson = new Gson();
 			String mensaje = respuestaGenerado.getMensaje().substring(7, respuestaGenerado.getMensaje().length() - 1);
 

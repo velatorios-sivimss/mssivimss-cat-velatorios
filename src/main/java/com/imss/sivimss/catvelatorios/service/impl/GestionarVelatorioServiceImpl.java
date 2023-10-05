@@ -1,6 +1,8 @@
 package com.imss.sivimss.catvelatorios.service.impl;
 
 import java.io.IOException;
+import java.util.logging.Level;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,26 +13,42 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.imss.sivimss.catvelatorios.beans.GestionarVelatorios;
 import com.imss.sivimss.catvelatorios.exception.BadRequestException;
-import com.imss.sivimss.catvelatorios.model.request.BuscarVelatoriosRequest;
+import com.imss.sivimss.catvelatorios.model.request.BuscarVelatorioRequest;
 import com.imss.sivimss.catvelatorios.model.request.UsuarioDto;
 import com.imss.sivimss.catvelatorios.model.request.VelatoriosRequest;
 import com.imss.sivimss.catvelatorios.service.GestionarVelatorioService;
 import com.imss.sivimss.catvelatorios.util.AppConstantes;
 import com.imss.sivimss.catvelatorios.util.DatosRequest;
+import com.imss.sivimss.catvelatorios.util.LogUtil;
+import com.imss.sivimss.catvelatorios.util.MensajeResponseUtil;
 import com.imss.sivimss.catvelatorios.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.catvelatorios.util.Response;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 @Service
 public class GestionarVelatorioServiceImpl implements GestionarVelatorioService {
 	
 	@Value("${endpoints.mod-catalogos}")
 	private String urlDominioConsulta;
 
+	@Value("${endpoints.rutas.dominio-consulta-paginado}")
+	private String urlPaginado; 
+	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
+	
+	@Autowired
+	private LogUtil logUtil;
+	
+	private static final String BAJA = "baja";
+	private static final String ALTA = "alta";
+	private static final String MODIFICACION = "modificacion";
+	private static final String CONSULTA = "consulta";
+	private static final String INFORMACION_INCOMPLETA = "Informacion incompleta";
+	private static final String SIN_INFORMACION = "45";
+	private static final String EXITO = "EXITO";
 	
 	Gson gson = new Gson();
 	
@@ -38,8 +56,17 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> consultaGeneral(DatosRequest request, Authentication authentication) throws IOException {
-		return providerRestTemplate.consumirServicio(velatorio.catalogoVelatorio(request).getDatos(), urlDominioConsulta + "/generico/paginado ",
-				authentication);
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+   		BuscarVelatorioRequest filtros = gson.fromJson(datosJson, BuscarVelatorioRequest .class);
+   	 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
+     Integer tamanio = Integer.valueOf(Integer.parseInt(request.getDatos().get("tamanio").toString()));
+     filtros.setTamanio(tamanio.toString());
+     filtros.setPagina(pagina.toString());
+     
+    		  Response <?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.catalogoVelatorio(request,filtros).getDatos(), urlPaginado,
+      				authentication), SIN_INFORMACION);
+    		  logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA CATALOGO VELATORIOS OK", CONSULTA);
+    		  return response;
 	}
 
 	@Override
@@ -51,7 +78,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	@Override
 	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
-		BuscarVelatoriosRequest buscar = gson.fromJson(datosJson, BuscarVelatoriosRequest.class);
+		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
 		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlDominioConsulta + "/generico/paginado",
 				authentication);
 	}

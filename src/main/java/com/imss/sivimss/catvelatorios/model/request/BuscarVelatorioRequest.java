@@ -14,10 +14,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIgnoreType(value = true)
-public class BuscarVelatoriosRequest {
+public class BuscarVelatorioRequest {
 	
-	private String velatorio;
-	private String delegacion;
-	
+	private String nomVelatorio;
+	private String idDelegacion;
+	private String tamanio;
+	private String pagina;
 	
 }

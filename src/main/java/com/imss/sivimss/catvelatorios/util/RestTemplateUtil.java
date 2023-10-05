@@ -50,7 +50,17 @@ public class RestTemplateUtil {
 	 */
 	public Response<?> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
 													 Class<?> clazz) throws IOException {
-		return sendPostRequest(url,body, clazz, subject);
+		Response<?> responseBody = new Response<>();
+		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
+
+		HttpEntity<Object> request = new HttpEntity<>(body, headers);
+		ResponseEntity<?> responseEntity = null;
+
+		responseEntity = restTemplate.postForEntity(url, request, clazz);
+
+		responseBody = (Response<List<String>>) responseEntity.getBody();
+
+		return responseBody;
 	}
 
 	/**

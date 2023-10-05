@@ -36,7 +36,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 			if (jwt != null && jwtUtils.validateToken(jwt,  request)) {
 				// == regresa un usuario
-				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(jwtUtils.getUsernameFromToken(jwt), null, new ArrayList<>());
+				UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+						jwtUtils.getUsernameFromToken(jwt), null, new ArrayList<>());
 
 				// == setear el contexto para el usuario logueado
 				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
