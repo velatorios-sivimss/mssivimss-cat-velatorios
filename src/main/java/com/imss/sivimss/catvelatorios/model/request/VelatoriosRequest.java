@@ -1,7 +1,5 @@
 package com.imss.sivimss.catvelatorios.model.request;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 import lombok.AllArgsConstructor;
@@ -19,21 +17,17 @@ import lombok.Setter;
 public class VelatoriosRequest {
 	
 	private Integer idVelatorio;
+	private Integer idDelegacion;
+	private Integer idAdmin;
 	private String nomVelatorio;
 	private String nomRespoSanitario;
 	private Integer cveAsignacion;
-	private String desCalle;
+	private String calle;
+	private String colonia;
 	private Integer numExterior;
-	private Integer idCodigoPostal;
-	private String numTelefono;
-	private Integer indEstatus;
-	private Integer idUsuarioAlta;
-	private Date fecAlta;
-	private Date fecActualizacion;
-	private Date fecBaja;
-	private String idUsuarioModifica;
-	private Integer idUsuarioBaja;
-	private Integer idDelegacion;
+	private Integer cp;
+	private String tel;
+	private String correo;
+	private Boolean estatus;
 	
-
 }

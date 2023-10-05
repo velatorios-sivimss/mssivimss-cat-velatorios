@@ -32,8 +32,8 @@ public class AppConstantes {
 	public static final String SIGNATUREEXCEPTION_MENSAJE  = "Fallo la firma.";
 	public static final String FORBIDDENEXCEPTION_MENSAJE  = "No tiene autorización para realizar la solicitud.";
 	
-	public static final String INDESTATUS  = "IND_ESTATUS";
-	public static final String CURRENT_TIMESTAMP  = "CURRENT_TIMESTAMP()";
+	public static final String IND_ACTIVO  = "IND_ACTIVO";
+	public static final String CURRENT_TIMESTAMP  = "CURRENT_DATE()";
 	public static final String PALABRA  = "palabra";
 	public static final String EXITO  = "EXITO";
 

@@ -36,6 +36,9 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	@Value("${endpoints.rutas.dominio-consulta-paginado}")
 	private String urlPaginado; 
 	
+	@Value("${endpoints.rutas.dominio-crear-multiple}")
+	private String urlCrearMultiple;
+	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
@@ -71,8 +74,22 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> buscarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
+		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DETALLE OK", CONSULTA);
 		return providerRestTemplate.consumirServicio(velatorio.verDetalle(request).getDatos(), urlConsulta,
 				authentication);
+	}
+	
+	
+	@Override
+	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
+		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
+		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
+		 
+			//if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
+				velatorio= new GestionarVelatorios(velatorioRequest);
+				velatorio.setIdUsuario(usuarioDto.getIdUsuario());
+				return providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
+						authentication);
 	}
 
 	@Override
@@ -81,22 +98,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
 		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
 				authentication);
-	}
-
-	@Override
-	public Response<?> agregarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-	
-		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
-		 
-			if(!validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
-				velatorio= new GestionarVelatorios(velatorioRequest);
-				velatorio.setIdUsuarioAlta(usuarioDto.getIdUsuario());
-				return providerRestTemplate.consumirServicio(velatorio.insertar().getDatos(), urlConsulta + "/generico/crear",
-						authentication);
-			}
-				throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede registar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());
-		      
 	}
 
 	@Override
@@ -109,8 +110,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		}
 		if(!validarRegistroActualizar(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio(), authentication)) {
 		velatorio= new GestionarVelatorios(velatorioRequest);
-		velatorio.setIdUsuarioModifica(usuarioDto.getIdUsuario().toString());
-		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
+		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
 		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlConsulta + "/generico/actualizar",
 				authentication);
 		}
@@ -122,12 +122,12 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		
-		if (velatorioRequest.getIdVelatorio()== null || velatorioRequest.getIndEstatus()==null) {
+		if (velatorioRequest.getIdVelatorio()== null || velatorioRequest.getEstatus()==null) {
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
 		}
 		velatorio= new GestionarVelatorios(velatorioRequest);
-		velatorio.setIndEstatus(velatorioRequest.getIndEstatus());
-		velatorio.setIdUsuarioBaja(usuarioDto.getIdUsuario());
+		//velatorio.setIndEstatus(velatorioRequest.getIndEstatus());
+		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
 		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus().getDatos(), urlConsulta + "/generico/actualizar",
 				authentication);
 	}
