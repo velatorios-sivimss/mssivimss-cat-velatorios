@@ -93,6 +93,20 @@ public class GestionarVelatorioController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
+	@PostMapping("/catalogos")
+	public  CompletableFuture<?> buscarCatalogos(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response = velatorioService.buscarCatalogos(request,authentication);		
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+
+      
+	}
+	
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
 	@PostMapping("/filtros")
 	public CompletableFuture<?> buscarDelegacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
@@ -104,18 +118,6 @@ public class GestionarVelatorioController {
 	}
 	
 	
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	@PostMapping("/buscar/cp")
-	public  CompletableFuture<?> buscarCp(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-	
-		Response<?> response = velatorioService.obtenerCp(request,authentication);		
-		return CompletableFuture
-				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-
-      
-	}
 	
 	/**
 	 * fallbacks generico

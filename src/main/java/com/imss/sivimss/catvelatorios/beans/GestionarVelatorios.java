@@ -342,27 +342,48 @@ public class GestionarVelatorios {
 				return request;
 		}
 
-		public DatosRequest validacionActualizar(String nomVelatorio, Integer idVelatorio) {
-			DatosRequest request= new DatosRequest();
+		
+		public DatosRequest obtenerUsrAdmin(DatosRequest request, String idVelatorio) {
 			Map<String, Object> parametro = new HashMap<>();
-				String query = "SELECT *  FROM SVC_VELATORIO WHERE NOM_VELATORIO=  '"+nomVelatorio +"' "
-				+ " AND ID_VELATORIO!= "+idVelatorio +"";
-				String encoded=DatatypeConverter.printBase64Binary(query.getBytes());
-				parametro.put(AppConstantes.QUERY, encoded);
-					request.setDatos(parametro);
-					return request; 
-				
-				
+			SelectQueryUtil queryUtil = new SelectQueryUtil();
+	        queryUtil.select("ID_USUARIO AS id",
+	        		"CONCAT(NOM_USUARIO, ' ', NOM_APELLIDO_PATERNO, ' ', NOM_APELLIDO_MATERNO) AS admin")
+	        .from("SVT_USUARIOS");
+	        if(idVelatorio!=null) {
+	        	queryUtil.where("ID_VELATORIO =" +idVelatorio);
+	        }
+	        String query = obtieneQuery(queryUtil);
+			log.info(query);
+			String encoded = encodedQuery(query);
+			  parametro.put(AppConstantes.QUERY, encoded);
+			  request.setDatos(parametro);
+			return request;
 		}
-
-		public DatosRequest obtenerCp(DatosRequest request) {
-			String palabra = request.getDatos().get("palabra").toString();
-			String query = "SELECT ID_CODIGO_POSTAL AS idCodigoPostal, DES_COLONIA AS colonia, "
+		
+		public DatosRequest obtenerDelegaciones(DatosRequest request) {
+			Map<String, Object> parametro = new HashMap<>();
+			SelectQueryUtil queryUtil = new SelectQueryUtil();
+	        queryUtil.select("ID_DELEGACION AS id",
+	        		"DES_DELEGACION AS delegacion")
+	        .from("SVC_DELEGACION");
+	        String query = obtieneQuery(queryUtil);
+			String encoded = encodedQuery(query);
+			  parametro.put(AppConstantes.QUERY, encoded);
+			  request.setDatos(parametro);
+			return request;
+		}
+		
+		
+		public DatosRequest obtenerCp(DatosRequest request, Integer cp) {
+			Map<String, Object> parametro = new HashMap<>();
+			String query = "SELECT ID_CODIGO_POSTAL AS idCP, DES_COLONIA AS colonia, "
 					+ "DES_ESTADO AS estado, DES_MNPIO AS municipio "
-					+ "FROM svc_cp WHERE CVE_CODIGO_POSTAL="+ Integer.parseInt(palabra) + "";
-			request.getDatos().remove("palabra");
-			request.getDatos().put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
-
+					+ "FROM SVC_CP WHERE CVE_CODIGO_POSTAL= "+cp;
+			log.info(query);
+			String encoded = encodedQuery(query);
+			  parametro.put(AppConstantes.QUERY, encoded);
+			 // request.getDatos().remove(AppConstantes.DATOS);
+			  request.setDatos(parametro);
 			return request;
 		}
 		

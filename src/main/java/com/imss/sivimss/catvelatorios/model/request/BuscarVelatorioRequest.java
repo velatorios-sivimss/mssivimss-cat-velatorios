@@ -20,6 +20,8 @@ public class BuscarVelatorioRequest {
 	private String idDelegacion;
 	private String idVelatorio;
 	private Boolean estatus;
+	private Integer idCatalogo;
+	private Integer cp;
 	private String tamanio;
 	private String pagina;
 	

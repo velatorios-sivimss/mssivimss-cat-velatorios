@@ -25,7 +25,8 @@ public interface GestionarVelatorioService {
 
 	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException;
 
-	public Response<?> obtenerCp(DatosRequest request, Authentication authentication)throws IOException;
+
+	public Response<?> buscarCatalogos(DatosRequest request, Authentication authentication)throws IOException;;
 	
 
 }

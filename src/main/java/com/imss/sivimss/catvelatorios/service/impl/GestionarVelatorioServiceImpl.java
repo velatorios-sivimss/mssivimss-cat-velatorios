@@ -57,6 +57,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	private static final String SIN_INFORMACION = "45";
 	private static final String YA_EXISTE = "12";
 	private static final String AGREGADO_CORRECTAMENTE = "30";
+	private static final String EXITO = "EXITO";
 	
 	Gson gson = new Gson();
 	
@@ -161,16 +162,37 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
 		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus(dr.getIdVelatorio(), dr.getEstatus()).getDatos(), urlActualizar,
-				authentication);
+		 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Estatus actualizado correctamente", BAJA);
+		return MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(velatorio.cambiarEstatus(dr.getIdVelatorio(), dr.getEstatus()).getDatos(), urlActualizar,
+				authentication), EXITO);
+	}
+	
+	@Override
+	public Response<?> buscarCatalogos(DatosRequest request, Authentication authentication) throws IOException {
+		Response <?> response = new Response<>();
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+   		BuscarVelatorioRequest dr = gson.fromJson(datosJson, BuscarVelatorioRequest .class);  
+   		if(dr.getIdCatalogo()==1) {
+    		response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.obtenerUsrAdmin(request, dr.getIdVelatorio()).getDatos(), urlConsulta,
+    				authentication), SIN_INFORMACION);	
+   		}else if(dr.getIdCatalogo()==2) {
+    		response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.obtenerDelegaciones(request).getDatos(), urlConsulta,
+    				authentication), SIN_INFORMACION);
+     }else if(dr.getIdCatalogo()==3) {
+        		response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.obtenerCp(request, dr.getCp()).getDatos(), urlConsulta,
+        				authentication), SIN_INFORMACION);
+         }else {
+        	 throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+         }
+		return response;
 	}
 	
 	@Override
 	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
 		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
-		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
-				authentication);
+		return MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
+				authentication), EXITO) ;
 	}
 	
 	private boolean validarRegistro(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException{
@@ -178,21 +200,6 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 					authentication), SIN_INFORMACION) ;
 				return !response.getMensaje().equals(SIN_INFORMACION);	
 				}
-		
-	/*private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
-		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlConsulta + "/generico/consulta",
-				authentication);
-		if (response.getCodigo()==200){
-	Object rst=response.getDatos();
-	return !rst.toString().equals("[]");
-		}
-		 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
-	} */
 
-	@Override
-	public Response<?> obtenerCp(DatosRequest request, Authentication authentication) throws IOException {
-		return providerRestTemplate.consumirServicio(velatorio.obtenerCp(request).getDatos(), urlConsulta + "/generico/consulta",
-				authentication);	
-	}
 	
 }
