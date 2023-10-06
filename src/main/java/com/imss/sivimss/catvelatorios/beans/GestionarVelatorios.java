@@ -219,7 +219,25 @@ public class GestionarVelatorios {
 		q.agregarParametroValues("FEC_ACTUALIZACION", AppConstantes.CURRENT_TIMESTAMP);
 		q.addWhere("ID_VELATORIO = " + this.idVelatorio);
 		String query = q.obtenerQueryActualizar();
-		log.info("actulizar ->"+query);
+		log.info("actualizar ->"+query);
+		String encoded = encodedQuery(query);
+		parametro.put(AppConstantes.QUERY, encoded);
+		request.setDatos(parametro);
+		return request;
+	}
+	
+	public DatosRequest actualizarDomicilio() {
+		DatosRequest request= new DatosRequest();
+		Map<String, Object> parametro = new HashMap<>();
+		final QueryHelper q = new QueryHelper("UPDATE SVT_DOMICILIO");
+		q.agregarParametroValues("DES_CALLE", "'" + this.calle + "'");
+		q.agregarParametroValues("NUM_EXTERIOR", "'" + this.numExterior + "'");
+		q.agregarParametroValues("DES_CP", this.cp.toString());
+		q.agregarParametroValues("DES_COLONIA", "'" + this.colonia + "'");
+		q.agregarParametroValues("ID_USUARIO_MODIFICA", idUsuario.toString());
+		q.agregarParametroValues("FEC_ACTUALIZACION", AppConstantes.CURRENT_TIMESTAMP);
+		q.addWhere("ID_DOMICILIO=" +this.idDomicilio);
+		String query = q.obtenerQueryActualizar();
 		String encoded = encodedQuery(query);
 		parametro.put(AppConstantes.QUERY, encoded);
 		request.setDatos(parametro);
@@ -342,6 +360,5 @@ public class GestionarVelatorios {
 		private static String obtieneQuery(SelectQueryUtil queryUtil) {
 	        return queryUtil.build();
 		}
-
 
 		}

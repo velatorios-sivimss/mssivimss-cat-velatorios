@@ -100,7 +100,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 					return response;
 				}
 				velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-				response = MensajeResponseUtil.mensajeResponse( providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
+				response = MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
 						authentication), AGREGADO_CORRECTAMENTE);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Velatorio agregado correctamente", ALTA);
 		 }catch(Exception e) {
@@ -134,6 +134,12 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
 		 response = providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlActualizar,
 				authentication);	
+		 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Velatorio actualizado correctamente", MODIFICACION);
+		if(response.getCodigo()==200) {
+			response = MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(velatorio.actualizarDomicilio().getDatos(), urlActualizar,
+					authentication),AGREGADO_CORRECTAMENTE);
+			 logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Domicilio actualizado correctamente", MODIFICACION);
+		}
 		}catch(Exception e) {
 			String consulta = velatorio.actualizar().getDatos().get(AppConstantes.QUERY).toString();
 			String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
