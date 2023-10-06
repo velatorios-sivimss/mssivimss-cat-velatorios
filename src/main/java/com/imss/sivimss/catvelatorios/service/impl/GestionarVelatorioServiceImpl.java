@@ -40,6 +40,9 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	@Value("${endpoints.rutas.dominio-crear-multiple}")
 	private String urlCrearMultiple;
 	
+	@Value("${endpoints.rutas.dominio-actualizar}")
+	private String urlActualizar;
+	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
@@ -89,7 +92,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
 		velatorio= new GestionarVelatorios(velatorioRequest);
 		try {
-			 if(validarRegistro(velatorioRequest.getNomVelatorio(), authentication)) {
+			 if(validarRegistro(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio() ,authentication)) {
 				 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"YA EXISTE EL VELATORIO", ALTA);
 			    	 response.setError(true);
 					response.setCodigo(200);
@@ -101,7 +104,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 						authentication), AGREGADO_CORRECTAMENTE);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Velatorio agregado correctamente", ALTA);
 		 }catch(Exception e) {
-			 String consulta = velatorio.insertarDomicilio().getDatos().get("query").toString();
+			 String consulta = velatorio.insertarDomicilio().getDatos().get(AppConstantes.QUERY).toString();
 				String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
 				log.error("Error al ejecutar la query" +encoded);
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ERROR AL EJECUTAR LA QUERY", ALTA);
@@ -110,29 +113,35 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 				return response;
 	}
 
-	@Override
-	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException {
-		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
-		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
-		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
-				authentication);
-	}
 
 	@Override
 	public Response<?> actualizarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
+		Response<?> response = new Response<>();
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		VelatoriosRequest velatorioRequest = gson.fromJson( String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
-		
-		if (velatorioRequest.getIdVelatorio() == null) {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
+		if (velatorioRequest.getIdVelatorio() == null || velatorioRequest.getIdDomicilio() == null) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
-		if(!validarRegistroActualizar(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio(), authentication)) {
 		velatorio= new GestionarVelatorios(velatorioRequest);
-		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-		 return providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlConsulta + "/generico/actualizar",
-				authentication);
+		try {
+		if(validarRegistro(velatorioRequest.getNomVelatorio(), velatorioRequest.getIdVelatorio(), authentication)) {
+			 logUtil.crearArchivoLog(Level.WARNING.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"YA EXISTE EL VELATORIO", MODIFICACION);
+	    	 response.setError(true);
+			response.setCodigo(200);
+			response.setMensaje(YA_EXISTE);
+			return response;
 		}
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "No se puede actualizar el Velatorio con ese nombre: " +velatorioRequest.getNomVelatorio());		
+		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
+		 response = providerRestTemplate.consumirServicio(velatorio.actualizar().getDatos(), urlActualizar,
+				authentication);	
+		}catch(Exception e) {
+			String consulta = velatorio.actualizar().getDatos().get(AppConstantes.QUERY).toString();
+			String encoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+			log.error("Error al ejecutar la query" +encoded);
+			logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ERROR AL EJECUTAR LA QUERY", MODIFICACION);
+			throw new IOException("5", e.getCause()) ;
+		}
+		 return response;
 	}
 
 	@Override
@@ -150,14 +159,21 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 				authentication);
 	}
 	
-	private boolean validarRegistro(String nomVelatorio, Authentication authentication) throws IOException{
-			Response<?> response= providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio).getDatos(), urlConsulta,
-					authentication);
-				Object rst=response.getDatos();
-				return !rst.toString().equals("[]");	
+	@Override
+	public Response<?> buscarVelatorioDelegacion(DatosRequest request, Authentication authentication)throws IOException {
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		BuscarVelatorioRequest buscar = gson.fromJson(datosJson, BuscarVelatorioRequest.class);
+		return providerRestTemplate.consumirServicio(velatorio.velatorioPorDelegacion(request, buscar).getDatos(), urlConsulta,
+				authentication);
+	}
+	
+	private boolean validarRegistro(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException{
+			Response<?> response= MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.buscarRepetido(nomVelatorio, idVelatorio).getDatos(), urlConsulta,
+					authentication), SIN_INFORMACION) ;
+				return !response.getMensaje().equals(SIN_INFORMACION);	
 				}
 		
-	private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
+	/*private boolean validarRegistroActualizar(String nomVelatorio, Integer idVelatorio, Authentication authentication) throws IOException {
 		Response<?> response= providerRestTemplate.consumirServicio(velatorio.validacionActualizar(nomVelatorio, idVelatorio).getDatos(), urlConsulta + "/generico/consulta",
 				authentication);
 		if (response.getCodigo()==200){
@@ -165,7 +181,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	return !rst.toString().equals("[]");
 		}
 		 throw new BadRequestException(HttpStatus.BAD_REQUEST, "ERROR AL REGISTRAR EL VELATORIO ");
-	}
+	} */
 
 	@Override
 	public Response<?> obtenerCp(DatosRequest request, Authentication authentication) throws IOException {

@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/velatorio")
-public class GestionarVelatoriosController {
+public class GestionarVelatorioController {
 	
 	@Autowired
 	private GestionarVelatorioService velatorioService;
@@ -74,6 +74,17 @@ public class GestionarVelatoriosController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
+	@PostMapping("/actualizar")
+	public CompletableFuture<?> actualizar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response = velatorioService.actualizarVelatorio(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));      
+	}
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
 	@PostMapping("/filtros")
 	public CompletableFuture<?> buscarDelegacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
@@ -84,18 +95,7 @@ public class GestionarVelatoriosController {
       
 	}
 	
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	@PostMapping("/actualiza")
-	public CompletableFuture<?> actualizar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
-		Response<?> response = velatorioService.actualizarVelatorio(request,authentication);
-		return CompletableFuture
-				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-
-      
-	}
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")

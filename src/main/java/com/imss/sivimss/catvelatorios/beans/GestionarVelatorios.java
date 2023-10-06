@@ -31,6 +31,7 @@ public class GestionarVelatorios {
 	
 	private Integer idVelatorio;
 	private Integer idDelegacion;
+	private Integer idDomicilio;
 	private Integer idAdmin;
 	private String nomVelatorio;
 	private String nomRespoSanitario;
@@ -48,6 +49,7 @@ public class GestionarVelatorios {
 	public GestionarVelatorios(VelatoriosRequest velatorioRequest) {
 		this.idVelatorio = velatorioRequest.getIdVelatorio();
 		this.nomVelatorio = velatorioRequest.getNomVelatorio();
+		this.idDomicilio = velatorioRequest.getIdDomicilio();
 		this.idAdmin = velatorioRequest.getIdAdmin();
 		this.nomRespoSanitario = velatorioRequest.getNomRespoSanitario();
 		this.cveAsignacion = velatorioRequest.getCveAsignacion();
@@ -112,7 +114,7 @@ public class GestionarVelatorios {
 			String palabra = request.getDatos().get(""+AppConstantes.PALABRA+"").toString();
 			SelectQueryUtil queryUtil = new SelectQueryUtil();
 			queryUtil.select("VEL.ID_VELATORIO AS idVelatorio", 
-					"VEL.DES_VELATORIO AS Velatorio", 
+					"VEL.DES_VELATORIO AS velatorio", 
 					"VEL.NOM_RESPO_SANITARIO AS respoSanitario", 
 					"VEL.CVE_ASIGNACION AS cveAsignacion", 
 					"SD.DES_CALLE AS calle", 
@@ -120,9 +122,10 @@ public class GestionarVelatorios {
 					 "SD.DES_CP AS cp", 
 					 "VEL.NUM_TELEFONO AS numTelefono", 
 					 "VEL.IND_ACTIVO AS estatus",
-					  "SD.DES_COLONIA AS colonia", 
+					 "SD.DES_COLONIA AS colonia", 
 					"VEL.ID_DELEGACION AS idDelegacion", 
 					 "DEL.DES_DELEGACION AS delegacion",
+					 "VEL.ID_DOMICILIO AS idDomicilio",
 					  "CONCAT(USR.NOM_USUARIO, ' ', USR.NOM_APELLIDO_PATERNO, ' ', USR.NOM_APELLIDO_MATERNO) AS admin",
 					"(SELECT CP.DES_MNPIO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS municipio",
 					"(SELECT CP.DES_ESTADO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS estado",
@@ -204,25 +207,21 @@ public class GestionarVelatorios {
 		DatosRequest request= new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVC_VELATORIO");
-		q.agregarParametroValues("NOM_VELATORIO", "'" + this.nomVelatorio + "'");
+		q.agregarParametroValues("DES_VELATORIO", "'" + this.nomVelatorio + "'");
+		q.agregarParametroValues("ID_USUARIO_ADMIN", this.idAdmin.toString() );
 		q.agregarParametroValues("NOM_RESPO_SANITARIO", "'" + this.nomRespoSanitario + "'");
 		q.agregarParametroValues("CVE_ASIGNACION", "'" + this.cveAsignacion + "'");
-		q.agregarParametroValues("DES_CALLE", "'" + this.calle + "'");
-		q.agregarParametroValues("NUM_EXT", "'"+ this.numExterior + "'");
-		q.agregarParametroValues("ID_CODIGO_POSTAL", "'" + this.cp +"'");
 		q.agregarParametroValues("NUM_TELEFONO", "'" + this.tel +"'");
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO + "", "" + this.estatus +"");
-		q.agregarParametroValues("ID_USUARIO_MODIFICA", "'" + this.idUsuario + "'");
-		q.agregarParametroValues("FEC_ACTUALIZACION", ""+AppConstantes.CURRENT_TIMESTAMP+"");
-		q.agregarParametroValues("ID_DELEGACION", "'" + this.idDelegacion +"'");
-		if(Boolean.FALSE.equals(this.estatus)) {
-			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
-			q.agregarParametroValues("ID_USUARIO_BAJA", "'" + this.idUsuario + "'");
-		}
-		
+		q.agregarParametroValues("ID_DELEGACION", this.idDelegacion.toString());
+		/*q.agregarParametroValues("DES_CORREO", "'" + this.correo +"'");
+		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO + "", "" + this.estatus +"");*/
+		q.agregarParametroValues("ID_USUARIO_MODIFICA", this.idUsuario.toString()); 
+		q.agregarParametroValues("FEC_ACTUALIZACION", AppConstantes.CURRENT_TIMESTAMP);
 		q.addWhere("ID_VELATORIO = " + this.idVelatorio);
 		String query = q.obtenerQueryActualizar();
-		parametro.put(AppConstantes.QUERY, DatatypeConverter.printBase64Binary(query.getBytes()));
+		log.info("actulizar ->"+query);
+		String encoded = encodedQuery(query);
+		parametro.put(AppConstantes.QUERY, encoded);
 		request.setDatos(parametro);
 		return request;
 	}
@@ -292,10 +291,20 @@ public class GestionarVelatorios {
 			}
 				
 	}
-		public DatosRequest buscarRepetido(String nomVelatorio) {
+		public DatosRequest buscarRepetido(String nomVelatorio, Integer id) {
 			DatosRequest request= new DatosRequest();
 			Map<String, Object> parametro = new HashMap<>();
-				String query = "SELECT *  FROM SVC_VELATORIO WHERE DES_VELATORIO=  '"+nomVelatorio +"' ";
+			SelectQueryUtil queryUtil = new SelectQueryUtil();
+			queryUtil.select("ID_VELATORIO AS id")
+			.from("SVC_VELATORIO")
+			.where("DES_VELATORIO= :velatorio")
+			.setParameter("velatorio", nomVelatorio);
+			//String query = "SELECT ID_VELATORIO AS id  FROM  WHERE DES_VELATORIO=  '"+nomVelatorio +"' ";
+			if(id!=null) {
+				queryUtil.where("ID_VELATORIO !=" +id);
+			}
+			String query = obtieneQuery(queryUtil);
+			log.info("validar -> "+query);
 				String encoded=encodedQuery(query);
 				parametro.put(AppConstantes.QUERY, encoded);
 				request.setDatos(parametro);

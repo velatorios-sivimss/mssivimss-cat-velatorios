@@ -18,6 +18,7 @@ public class VelatoriosRequest {
 	
 	private Integer idVelatorio;
 	private Integer idDelegacion;
+	private Integer idDomicilio;
 	private Integer idAdmin;
 	private String nomVelatorio;
 	private String nomRespoSanitario;
