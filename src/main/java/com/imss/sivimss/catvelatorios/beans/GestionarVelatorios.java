@@ -60,14 +60,14 @@ public class GestionarVelatorios {
 		this.colonia = velatorioRequest.getColonia();
 		this.tel = velatorioRequest.getTel();
 		this.correo = velatorioRequest.getCorreo();
-		this.estatus = velatorioRequest.getEstatus();
 	}
 	
 		//Busqueda general
 	public DatosRequest catalogoVelatorio(DatosRequest request, BuscarVelatorioRequest filtros) {
 		Map<String, Object> parametros = new HashMap<>();
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("VEL.ID_VELATORIO AS idVelatorio", 
+		queryUtil.select("VEL.ID_VELATORIO AS idVelatorio",
+				"VEL.ID_DOMICILIO AS idDomicilio",
 				"VEL.DES_VELATORIO AS Velatorio", 
 				"VEL.NOM_RESPO_SANITARIO AS respoSanitario", 
 				"VEL.CVE_ASIGNACION AS cveAsignacion", 
@@ -88,12 +88,15 @@ public class GestionarVelatorios {
 			.from("SVC_VELATORIO VEL")
 		.join("SVC_DELEGACION DEL", "VEL.ID_DELEGACION = DEL.ID_DELEGACION")
 		.leftJoin("SVT_USUARIOS USR", "VEL.ID_USUARIO_ADMIN = USR.ID_USUARIO")
-		.leftJoin("SVT_DOMICILIO SD", "VEL.ID_DOMICILIO = SD.ID_DOMICILIO");
+		.leftJoin("SVT_DOMICILIO SD", "VEL.ID_DOMICILIO = SD.ID_DOMICILIO"); 
 		if(filtros.getIdDelegacion()!=null) {
-			queryUtil.where("VEL.ID_DELEGACION= "+filtros.getIdDelegacion()+"");
+			queryUtil.where("VEL.ID_DELEGACION= "+filtros.getIdDelegacion());
 		}
 		if(filtros.getNomVelatorio()!=null) {
 			queryUtil.where("VEL.DES_VELATORIO LIKE '%"+filtros.getNomVelatorio()+"%'");
+		}
+		if(filtros.getIdVelatorio()!=null) {
+			queryUtil.where("VEL.ID_VELATORIO= "+filtros.getIdVelatorio());
 		}
 		queryUtil.orderBy("VEL.ID_VELATORIO ASC");
 		String query = obtieneQuery(queryUtil);
@@ -109,29 +112,37 @@ public class GestionarVelatorios {
 	
 	
 	
+	/*private String obtieneSelect() {
+		return "VEL.ID_VELATORIO AS idVelatorio, " 
+				+"VEL.DES_VELATORIO AS Velatorio, " 
+				+"VEL.NOM_RESPO_SANITARIO AS respoSanitario, " 
+				+"VEL.CVE_ASIGNACION AS cveAsignacion, " 
+				+"SD.DES_CALLE AS calle, " 
+				+"SD.NUM_EXTERIOR AS numExterior, "
+				 +"SD.DES_CP AS cp, " 
+				 +"VEL.NUM_TELEFONO AS numTelefono, " 
+				 +"VEL.IND_ACTIVO AS estatus, "
+				  +"SD.DES_COLONIA AS colonia, " 
+				+"VEL.ID_DELEGACION AS idDelegacion, " 
+				 +"DEL.DES_DELEGACION AS delegacion, "
+				  +"CONCAT(USR.NOM_USUARIO, ' ', USR.NOM_APELLIDO_PATERNO, ' ', USR.NOM_APELLIDO_MATERNO) AS admin, "
+				+"(SELECT CP.DES_MNPIO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS municipio, "
+				+"(SELECT CP.DES_ESTADO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS estado, "
+			+"(SELECT COUNT(*) FROM SVC_SALA SAL WHERE IND_TIPO_SALA=1 AND SAL.ID_VELATORIO=VEL.ID_VELATORIO) AS salasEmbalsamamiento, "
+			+"(SELECT COUNT(*) FROM SVC_SALA SAL WHERE IND_TIPO_SALA=0 AND SAL.ID_VELATORIO=VEL.ID_VELATORIO) AS salasCremacion, "
+			+"(SELECT COUNT(*) FROM SVC_CAPILLA CAP WHERE CAP.ID_VELATORIO=VEL.ID_VELATORIO) AS capillas";
+			.from("SVC_VELATORIO VEL")
+		.join("SVC_DELEGACION DEL", "VEL.ID_DELEGACION = DEL.ID_DELEGACION")
+		.leftJoin("SVT_USUARIOS USR", "VEL.ID_USUARIO_ADMIN = USR.ID_USUARIO")
+		.leftJoin("SVT_DOMICILIO SD", "VEL.ID_DOMICILIO = SD.ID_DOMICILIO");
+		return queryUtil.toString();
+		}
+
 	//Buscar velatorio detalle
 		public DatosRequest verDetalle(DatosRequest request) {
 			String palabra = request.getDatos().get(""+AppConstantes.PALABRA+"").toString();
 			SelectQueryUtil queryUtil = new SelectQueryUtil();
-			queryUtil.select("VEL.ID_VELATORIO AS idVelatorio", 
-					"VEL.DES_VELATORIO AS velatorio", 
-					"VEL.NOM_RESPO_SANITARIO AS respoSanitario", 
-					"VEL.CVE_ASIGNACION AS cveAsignacion", 
-					"SD.DES_CALLE AS calle", 
-					"SD.NUM_EXTERIOR AS numExterior",
-					 "SD.DES_CP AS cp", 
-					 "VEL.NUM_TELEFONO AS numTelefono", 
-					 "VEL.IND_ACTIVO AS estatus",
-					 "SD.DES_COLONIA AS colonia", 
-					"VEL.ID_DELEGACION AS idDelegacion", 
-					 "DEL.DES_DELEGACION AS delegacion",
-					 "VEL.ID_DOMICILIO AS idDomicilio",
-					  "CONCAT(USR.NOM_USUARIO, ' ', USR.NOM_APELLIDO_PATERNO, ' ', USR.NOM_APELLIDO_MATERNO) AS admin",
-					"(SELECT CP.DES_MNPIO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS municipio",
-					"(SELECT CP.DES_ESTADO FROM SVC_CP CP WHERE SD.DES_CP = CP.CVE_CODIGO_POSTAL LIMIT 1) AS estado",
-				"(SELECT COUNT(*) FROM SVC_SALA SAL WHERE IND_TIPO_SALA=1 AND SAL.ID_VELATORIO=VEL.ID_VELATORIO) AS salasEmbalsamamiento",
-				"(SELECT COUNT(*) FROM SVC_SALA SAL WHERE IND_TIPO_SALA=0 AND SAL.ID_VELATORIO=VEL.ID_VELATORIO) AS salasCremacion",
-				"(SELECT COUNT(*) FROM SVC_CAPILLA CAP WHERE CAP.ID_VELATORIO=VEL.ID_VELATORIO) AS capillas")
+			queryUtil.select(obtieneSelect(), " SD.ID_DOMICILIO AS idDomicilio")
 				.from("SVC_VELATORIO VEL")
 			.join("SVC_DELEGACION DEL", "VEL.ID_DELEGACION = DEL.ID_DELEGACION")
 			.leftJoin("SVT_USUARIOS USR", "VEL.ID_USUARIO_ADMIN = USR.ID_USUARIO")
@@ -142,8 +153,8 @@ public class GestionarVelatorios {
 			String encoded = encodedQuery(query);
 			request.getDatos().remove(""+AppConstantes.PALABRA+"");
 			request.getDatos().put(AppConstantes.QUERY, encoded);
-			return request;
-		}
+			return request; 
+		}*/
 
 		
 		public DatosRequest insertarDomicilio() {
@@ -152,10 +163,10 @@ public class GestionarVelatorios {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVT_DOMICILIO");
 			q.agregarParametroValues("DES_CALLE", "'" + this.calle + "'");
 			q.agregarParametroValues("NUM_EXTERIOR", "'" + this.numExterior + "'");
-			q.agregarParametroValues("DES_CP", "" + this.cp + "");
+			q.agregarParametroValues("DES_CP", this.cp.toString());
 			q.agregarParametroValues("DES_COLONIA", "'" + this.colonia + "'");
-			q.agregarParametroValues("ID_USUARIO_ALTA", "" + idUsuario + "");
-			q.agregarParametroValues("FEC_ALTA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
+			q.agregarParametroValues("ID_USUARIO_ALTA", idUsuario.toString());
+			q.agregarParametroValues("FEC_ALTA", AppConstantes.CURRENT_TIMESTAMP);
 			String query = q.obtenerQueryInsertar()+"$$"+insertarVelatorio();
 			String encoded = encodedQuery(query);
 			 parametro.put("separador","$$");
@@ -168,14 +179,14 @@ public class GestionarVelatorios {
 		private String insertarVelatorio() {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_VELATORIO");
 			q.agregarParametroValues("DES_VELATORIO", "'" + this.nomVelatorio + "'");
-			q.agregarParametroValues("ID_USUARIO_ADMIN", "" + this.idAdmin + "");
+			q.agregarParametroValues("ID_USUARIO_ADMIN", this.idAdmin.toString());
 			q.agregarParametroValues("NOM_RESPO_SANITARIO", "'" + this.nomRespoSanitario + "'");
-			q.agregarParametroValues("ID_DELEGACION", "" + this.idDelegacion + "");
-			q.agregarParametroValues("CVE_ASIGNACION", "" + this.cveAsignacion + "");
+			q.agregarParametroValues("ID_DELEGACION", this.idDelegacion.toString());
+			q.agregarParametroValues("CVE_ASIGNACION", this.cveAsignacion.toString());
 			q.agregarParametroValues("ID_DOMICILIO", "idTabla");
-			q.agregarParametroValues("" +AppConstantes.IND_ACTIVO + "", "1");
+			q.agregarParametroValues(AppConstantes.IND_ACTIVO, "1");
 			q.agregarParametroValues("ID_USUARIO_ALTA", "" + this.idUsuario + "");
-			q.agregarParametroValues("FEC_ALTA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
+			q.agregarParametroValues("FEC_ALTA", AppConstantes.CURRENT_TIMESTAMP);
 			return q.obtenerQueryInsertar();
 		}
 
@@ -245,18 +256,20 @@ public class GestionarVelatorios {
 	}
 		
 		//Cambiar estatus
-	public DatosRequest cambiarEstatus() {
+	public DatosRequest cambiarEstatus(String idVelatorio, Boolean estatus) {
 		DatosRequest request= new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 		final QueryHelper q = new QueryHelper("UPDATE SVC_VELATORIO");
-		q.agregarParametroValues("" +AppConstantes.IND_ACTIVO + "", "" + this.estatus +"");
-		if(Boolean.FALSE.equals(this.estatus)) {
-			q.agregarParametroValues("FEC_BAJA", ""+AppConstantes.CURRENT_TIMESTAMP+"");
-			q.agregarParametroValues("ID_USUARIO_BAJA",  "'" + this.idUsuario + "'");
-		} 
-		q.addWhere("ID_VELATORIO = " + this.idVelatorio);
+		q.agregarParametroValues(AppConstantes.IND_ACTIVO , estatus.toString());
+		if(Boolean.FALSE.equals(estatus)) {
+			q.agregarParametroValues("FEC_BAJA", AppConstantes.CURRENT_TIMESTAMP);
+			q.agregarParametroValues("ID_USUARIO_BAJA",  this.idUsuario.toString());
+		}	
+		q.agregarParametroValues("FEC_ACTUALIZACION", AppConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues("ID_USUARIO_MODIFICA",  this.idUsuario.toString());
+		q.addWhere("ID_VELATORIO = " + idVelatorio);
 			String query = q.obtenerQueryActualizar();
-		    String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
+		    String encoded = encodedQuery(query);
 			parametro.put(AppConstantes.QUERY, encoded);
 			request.setDatos(parametro);
 			return request;	

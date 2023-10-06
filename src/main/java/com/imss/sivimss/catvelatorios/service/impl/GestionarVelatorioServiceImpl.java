@@ -79,8 +79,10 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 
 	@Override
 	public Response<?> buscarVelatorio(DatosRequest request, Authentication authentication) throws IOException {
-		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DETALLE OK", CONSULTA);
-		return providerRestTemplate.consumirServicio(velatorio.verDetalle(request).getDatos(), urlConsulta,
+   		BuscarVelatorioRequest filtros = new BuscarVelatorioRequest();
+   		filtros.setIdVelatorio(request.getDatos().get(""+AppConstantes.PALABRA+"").toString());
+   		logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"DETALLE OK", CONSULTA);
+		return providerRestTemplate.consumirServicio(velatorio.catalogoVelatorio(request, filtros).getDatos(), urlConsulta,
 				authentication);
 	}
 	
@@ -153,15 +155,13 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	@Override
 	public Response<?> cambiarEstatusVelatorio(DatosRequest request, Authentication authentication) throws IOException {
 		UsuarioDto usuarioDto = gson.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
-		VelatoriosRequest velatorioRequest = gson.fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), VelatoriosRequest.class);
-		
-		if (velatorioRequest.getIdVelatorio()== null || velatorioRequest.getEstatus()==null) {
-			throw new BadRequestException(HttpStatus.BAD_REQUEST, "Informacion incompleta");
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+   		BuscarVelatorioRequest dr = gson.fromJson(datosJson, BuscarVelatorioRequest .class);
+		if (dr.getIdVelatorio()== null) {
+			throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 		}
-		velatorio= new GestionarVelatorios(velatorioRequest);
-		//velatorio.setIndEstatus(velatorioRequest.getIndEstatus());
 		velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus().getDatos(), urlConsulta + "/generico/actualizar",
+		return providerRestTemplate.consumirServicio(velatorio.cambiarEstatus(dr.getIdVelatorio(), dr.getEstatus()).getDatos(), urlActualizar,
 				authentication);
 	}
 	

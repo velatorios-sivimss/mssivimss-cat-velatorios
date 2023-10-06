@@ -42,9 +42,7 @@ public class GestionarVelatorioController {
 	
 		Response<?> response = velatorioService.consultaGeneral(request,authentication);
 		return CompletableFuture
-				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-
-      
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));      
 	}
 	
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
@@ -85,6 +83,16 @@ public class GestionarVelatorioController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
+	@PostMapping("/cambiar-estatus")
+	public CompletableFuture<?> cambiarEstatus(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response = velatorioService.cambiarEstatusVelatorio(request,authentication);
+		return CompletableFuture
+				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
 	@PostMapping("/filtros")
 	public CompletableFuture<?> buscarDelegacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
@@ -95,18 +103,6 @@ public class GestionarVelatorioController {
       
 	}
 	
-	
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	@PostMapping("/estatus")
-	public CompletableFuture<?> cambiarEstatus(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-	
-		Response<?> response = velatorioService.cambiarEstatusVelatorio(request,authentication);
-		return CompletableFuture
-				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-
-	}
 	
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")

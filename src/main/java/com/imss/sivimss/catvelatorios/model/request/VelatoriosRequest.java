@@ -29,6 +29,4 @@ public class VelatoriosRequest {
 	private Integer cp;
 	private String tel;
 	private String correo;
-	private Boolean estatus;
-	
 }
