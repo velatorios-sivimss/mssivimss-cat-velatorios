@@ -29,13 +29,12 @@ public class ProviderServiceRestTemplate {
 
 	private static Logger log = LogManager.getLogger(ProviderServiceRestTemplate.class);
 
-	public Response<?> consumirServicio(Map<String, Object> dato, String url, Authentication authentication)
+	public Response<Object> consumirServicio(Map<String, Object> dato, String url, Authentication authentication)
 			throws IOException {
 		try {
-			Response<?> respuestaGenerado = restTemplateUtil.sendPostRequestByteArrayToken(url,
+			return restTemplateUtil.sendPostRequestByteArrayToken(url,
 					new EnviarDatosRequest(dato), jwtTokenProvider.createToken((String) authentication.getPrincipal()),
 					Response.class);
-			return validarResponse(respuestaGenerado);
 		} catch (IOException exception) {
 			log.error("Ha ocurrido un error al recuperar la informacion");
 			throw exception;

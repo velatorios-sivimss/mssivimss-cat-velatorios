@@ -9,7 +9,7 @@ import com.imss.sivimss.catvelatorios.util.Response;
 
 public interface GestionarVelatorioService {
 
-	public Response<?> consultaGeneral(DatosRequest request, Authentication authentication) throws IOException;
+	public Response<Object> consultaGeneral(DatosRequest request, Authentication authentication) throws IOException;
 	
 
 	public Response<?> buscarVelatorio(DatosRequest request, Authentication authentication) throws IOException;

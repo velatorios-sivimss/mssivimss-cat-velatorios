@@ -105,7 +105,7 @@ public class GestionarVelatorios {
 	    parametros.put(AppConstantes.QUERY, encoded);
 	    parametros.put("pagina",filtros.getPagina());
         parametros.put("tamanio",filtros.getTamanio());
-        request.getDatos().remove(AppConstantes.DATOS);
+    //   request.getDatos().remove(AppConstantes.DATOS);
 	    request.setDatos(parametros);
 		return request;
 	}
@@ -330,7 +330,6 @@ public class GestionarVelatorios {
 			.from("SVC_VELATORIO")
 			.where("DES_VELATORIO= :velatorio")
 			.setParameter("velatorio", nomVelatorio);
-			//String query = "SELECT ID_VELATORIO AS id  FROM  WHERE DES_VELATORIO=  '"+nomVelatorio +"' ";
 			if(id!=null) {
 				queryUtil.where("ID_VELATORIO !=" +id);
 			}

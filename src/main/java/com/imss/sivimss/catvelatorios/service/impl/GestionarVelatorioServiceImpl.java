@@ -58,13 +58,14 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 	private static final String YA_EXISTE = "12";
 	private static final String AGREGADO_CORRECTAMENTE = "30";
 	private static final String EXITO = "EXITO";
+	private static final String ERROR = "52";
 	
 	Gson gson = new Gson();
 	
 	GestionarVelatorios velatorio= new GestionarVelatorios();
 
 	@Override
-	public Response<?> consultaGeneral(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> consultaGeneral(DatosRequest request, Authentication authentication) throws IOException {
 		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
    		BuscarVelatorioRequest filtros = gson.fromJson(datosJson, BuscarVelatorioRequest .class);
    	 Integer pagina = Integer.valueOf(Integer.parseInt(request.getDatos().get("pagina").toString()));
@@ -72,8 +73,8 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
      filtros.setTamanio(tamanio.toString());
      filtros.setPagina(pagina.toString());
      
-    		  Response <?> response = MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(velatorio.catalogoVelatorio(request,filtros).getDatos(), urlPaginado,
-      				authentication), SIN_INFORMACION);
+    		  Response <Object> response = providerRestTemplate.consumirServicio(velatorio.catalogoVelatorio(request,filtros).getDatos(), urlPaginado,
+      				authentication);
     		  logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"CONSULTA CATALOGO VELATORIOS OK", CONSULTA);
     		  return response;
 	}
@@ -103,8 +104,9 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 					return response;
 				}
 				velatorio.setIdUsuario(usuarioDto.getIdUsuario());
-				response = MensajeResponseUtil.mensajeResponse(providerRestTemplate.consumirServicio(velatorio.insertarDomicilio().getDatos(), urlCrearMultiple,
-						authentication), AGREGADO_CORRECTAMENTE);
+				 final DatosRequest datosRequest = velatorio.insertarDomicilio();
+				response = providerRestTemplate.consumirServicio(datosRequest.getDatos(), urlCrearMultiple,
+						authentication);
 				logUtil.crearArchivoLog(Level.INFO.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"Velatorio agregado correctamente", ALTA);
 		 }catch(Exception e) {
 			 String consulta = velatorio.insertarDomicilio().getDatos().get(AppConstantes.QUERY).toString();
@@ -113,7 +115,7 @@ public class GestionarVelatorioServiceImpl implements GestionarVelatorioService 
 				logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(),this.getClass().getPackage().toString(),"ERROR AL EJECUTAR LA QUERY", ALTA);
 				throw new IOException("5", e.getCause()) ;
 		 }
-				return response;
+				return MensajeResponseUtil.mensajeResponse(response, AGREGADO_CORRECTAMENTE);
 	}
 
 
